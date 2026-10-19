@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Library, Wrench } from 'lucide-react';
-import type { QuizAttemptRecord, QuizConfig } from '../../types/quiz';
+import type {
+  Question,
+  QuizAttemptRecord,
+  QuizConfig,
+} from '../../types/quiz';
+import type { SavedReviewQuestion } from '../../types/review';
 import { quizStarted, track } from '../../utils/analytics';
 import { loadSavedQuizzes, saveQuiz } from '../../utils/attemptStorage';
 import { browserStorage, safely } from '../../utils/browserStorage';
+import { saveWrongQuestion } from '../../utils/reviewStorage';
 import { AppearanceSettings, type Theme } from './AppearanceSettings';
 import { MockTestCreator } from '../creator/MockTestCreator';
 import { QuizHistory } from '../history/QuizHistory';
@@ -39,6 +45,9 @@ export const AppContainer: React.FC = () => {
   const [reviewRecord, setReviewRecord] = useState<QuizAttemptRecord | null>(
     null,
   );
+  const [reviewQuestions, setReviewQuestions] = useState<
+    SavedReviewQuestion[] | undefined
+  >();
   const [savedCount, setSavedCount] = useState(0);
 
   useEffect(() => track({ event: 'app_opened' }), []);
@@ -68,6 +77,30 @@ export const AppContainer: React.FC = () => {
     handleStartQuiz(quiz);
   };
 
+  const handleSaveWrongQuestion = (
+    quiz: QuizConfig,
+    question: Question,
+    wrongAnswer: string | string[],
+  ): boolean => {
+    if (!storage) return false;
+    const saved = safely(() =>
+      saveWrongQuestion(storage, {
+        quizId: quiz.id,
+        quizTitle: quiz.title,
+        courseCode: quiz.courseCode || 'GENERAL',
+        question,
+        wrongAnswer,
+      }),
+    );
+    return saved !== undefined;
+  };
+
+  const handleCreateReviewTest = (selected: SavedReviewQuestion[]) => {
+    setReviewQuestions(selected);
+    setReviewRecord(null);
+    setViewMode('creator');
+  };
+
   const showView = (mode: ViewMode) => {
     setReviewRecord(null);
     setViewMode(mode);
@@ -82,6 +115,13 @@ export const AppContainer: React.FC = () => {
           timeTakenSeconds={reviewRecord.timeTakenSeconds}
           eventLog={reviewRecord.eventLog}
           onRetake={() => handleStartQuiz(reviewRecord.quizSnapshot)}
+          onSaveQuestion={(question, wrongAnswer) =>
+            handleSaveWrongQuestion(
+              reviewRecord.quizSnapshot,
+              question,
+              wrongAnswer,
+            )
+          }
           onExit={() => showView('history')}
           theme={theme}
           onThemeChange={setTheme}
@@ -97,6 +137,9 @@ export const AppContainer: React.FC = () => {
           key={currentQuiz.id}
           quiz={currentQuiz}
           onExit={() => showView('creator')}
+          onSaveQuestion={(question, wrongAnswer) =>
+            handleSaveWrongQuestion(currentQuiz, question, wrongAnswer)
+          }
         />
       </div>
     );
@@ -149,13 +192,18 @@ export const AppContainer: React.FC = () => {
 
       <main className="flex-1 py-8 px-4">
         {viewMode === 'creator' && (
-          <MockTestCreator onStart={handleStartFromCreator} />
+          <MockTestCreator
+            key={reviewQuestions ? 'review-creator' : 'creator'}
+            onStart={handleStartFromCreator}
+            reviewQuestions={reviewQuestions}
+          />
         )}
         {viewMode === 'history' && (
           <QuizHistory
             onStart={handleStartQuiz}
             onCreate={() => showView('creator')}
             onReview={setReviewRecord}
+            onCreateReviewTest={handleCreateReviewTest}
           />
         )}
       </main>

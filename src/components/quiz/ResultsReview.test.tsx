@@ -139,7 +139,32 @@ describe('ResultsReview', () => {
     await userEvent.click(
       screen.getAllByRole('button', { name: 'Retake Quiz' })[0],
     );
-
     expect(onRetake).toHaveBeenCalledOnce();
+  });
+
+  it('saves missed questions', async () => {
+    const onSaveQuestion = vi.fn();
+    renderResults(undefined, { onSaveQuestion });
+
+    await userEvent.click(
+      screen.getAllByRole('button', { name: 'Save for review' })[0],
+    );
+
+    expect(onSaveQuestion).toHaveBeenCalledWith(quiz.questions[1], 'b');
+  });
+
+  it('keeps a question retryable and reports when saving fails', async () => {
+    renderResults(undefined, { onSaveQuestion: () => false });
+
+    await userEvent.click(
+      screen.getAllByRole('button', { name: 'Save for review' })[0],
+    );
+
+    expect(
+      screen.getAllByRole('button', { name: 'Save for review' }),
+    ).toHaveLength(2);
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'Could not save this question in browser storage.',
+    );
   });
 });

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  buildReviewPrompt,
   buildPrompt,
   defaultPromptOptions,
   defaultTestConfig,
@@ -74,6 +75,37 @@ describe('buildPrompt', () => {
       buildPrompt(options(), 'quiz-1'),
     );
     expect(buildPrompt(options(), 'quiz-1')).toContain('"id": "quiz-1"');
+  });
+});
+
+describe('buildReviewPrompt', () => {
+  it('includes saved mistakes and asks for a non-copying 60/40 practice mix', () => {
+    const prompt = buildReviewPrompt(options(), 'review-test', [
+      {
+        id: 'quiz:q1',
+        quizId: 'quiz',
+        quizTitle: 'Cloud basics',
+        courseCode: 'CS1',
+        question: {
+          id: 'q1',
+          number: 1,
+          page: 1,
+          type: 'mcq',
+          prompt: 'What is object storage?',
+          points: 1,
+          options: [{ id: 'a', text: 'Stores objects' }],
+          correctAnswer: 'a',
+        },
+        wrongAnswer: 'b',
+        timesWrong: 2,
+      },
+    ]);
+
+    expect(prompt).toContain('approximately 60%');
+    expect(prompt).toContain('approximately 40%');
+    expect(prompt).toContain('What is object storage?');
+    expect(prompt).toContain('Do NOT copy or closely paraphrase');
+    expect(prompt).toContain('═══ STUDY MATERIAL BELOW ═══');
   });
 });
 

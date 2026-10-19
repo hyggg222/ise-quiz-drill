@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   Award,
+  BookmarkPlus,
   Check,
   CheckCircle2,
   Clock,
@@ -10,7 +11,7 @@ import {
   ShieldAlert,
   X,
 } from 'lucide-react';
-import type { QuizConfig, QuizEvent } from '../../types/quiz';
+import type { Question, QuizConfig, QuizEvent } from '../../types/quiz';
 import type { Answer } from '../../utils/answers';
 import { gradeQuiz } from '../../utils/grading';
 import { AppearanceSettings, type Theme } from '../app/AppearanceSettings';
@@ -25,6 +26,7 @@ export interface ResultsReviewProps {
   onExit?: () => void;
   theme?: Theme;
   onThemeChange?: (theme: Theme) => void;
+  onSaveQuestion?: (question: Question, wrongAnswer: Answer) => boolean | void;
 }
 
 export type FilterMode = 'incorrect' | 'correct' | 'all';
@@ -74,8 +76,13 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
   onExit,
   theme,
   onThemeChange,
+  onSaveQuestion,
 }) => {
   const [filterMode, setFilterMode] = useState<FilterMode>('incorrect');
+  const [savedQuestionIds, setSavedQuestionIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [saveErrors, setSaveErrors] = useState<Set<string>>(() => new Set());
 
   const { results, earnedScore, totalPoints, percentage } = gradeQuiz(
     quiz,
@@ -87,6 +94,9 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
   const incorrectCount = results.length - correctIds.size;
   const correctCount = correctIds.size;
   const totalCount = quiz.questions.length;
+  const resultByQuestionId = new Map(
+    results.map((result) => [result.questionId, result]),
+  );
 
   const filteredQuestions = quiz.questions.filter((q) =>
     filterMode === 'all'
@@ -418,6 +428,46 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
                       onToggleFlag={() => {}}
                       reviewMode
                     />
+                    {!resultByQuestionId.get(question.id)?.isCorrect &&
+                      onSaveQuestion && (
+                        <div className="mt-3">
+                          <button
+                            type="button"
+                            disabled={savedQuestionIds.has(question.id)}
+                            onClick={() => {
+                              const saved = onSaveQuestion(
+                                question,
+                                answers[question.id] ?? '',
+                              );
+                              setSaveErrors((current) => {
+                                const next = new Set(current);
+                                if (saved === false) next.add(question.id);
+                                else next.delete(question.id);
+                                return next;
+                              });
+                              if (saved === false) return;
+                              setSavedQuestionIds((current) =>
+                                new Set(current).add(question.id),
+                              );
+                            }}
+                            className="inline-flex items-center gap-2 rounded-md border border-[#006fbf] px-3 py-1.5 text-xs font-bold text-[#006fbf] hover:bg-blue-50 disabled:cursor-default disabled:border-gray-300 disabled:text-gray-500"
+                          >
+                            <BookmarkPlus
+                              aria-hidden="true"
+                              className="h-3.5 w-3.5"
+                            />
+                            {savedQuestionIds.has(question.id)
+                              ? 'Saved for review'
+                              : 'Save for review'}
+                          </button>
+                          {saveErrors.has(question.id) && (
+                            <p role="alert" className="mt-2 text-xs text-red-700">
+                              Could not save this question in browser storage.
+                              Check that storage is available and try again.
+                            </p>
+                          )}
+                        </div>
+                      )}
                   </div>
                 ))}
               </div>

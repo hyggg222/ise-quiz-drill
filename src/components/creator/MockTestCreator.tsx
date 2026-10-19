@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, MessageSquareText, Play, Settings } from 'lucide-react';
 import type { QuizConfig } from '../../types/quiz';
+import type { SavedReviewQuestion } from '../../types/review';
 import { track } from '../../utils/analytics';
 import {
   buildPrompt,
+  buildReviewPrompt,
   defaultPromptOptions,
   defaultTestConfig,
   validatePromptOptions,
@@ -31,6 +33,7 @@ import { TestConfigForm } from './TestConfigForm';
 export interface MockTestCreatorProps {
   onStart: (quiz: QuizConfig) => void;
   readyTests?: ReadyTest[];
+  reviewQuestions?: SavedReviewQuestion[];
 }
 
 const card =
@@ -47,27 +50,48 @@ const paths = [
 export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
   onStart,
   readyTests = builtInReadyTests,
+  reviewQuestions,
 }) => {
   // Options, config and JSON text live here, not in the step sections, so
   // they survive a change of step and a preset can fill them from step 1.
   const [step, setStep] = useState<Step>(1);
   const [config, setConfig] = useState(defaultTestConfig);
-  const [options, setOptions] = useState(defaultPromptOptions);
+  const [options, setOptions] = useState(() => {
+    if (!reviewQuestions?.length) return defaultPromptOptions;
+    return {
+      ...defaultPromptOptions,
+      questionCount: Math.max(10, reviewQuestions.length),
+      types: [...new Set(reviewQuestions.map((saved) => saved.question.type))],
+      topics: 'Review the concepts represented by the saved questions.',
+    };
+  });
+  const [reviewPercentage, setReviewPercentage] = useState(60);
   const [jsonText, setJsonText] = useState('');
   // One id per creator session, so the prompt text stays the same
   const [quizId] = useState(() => `quiz-${Date.now()}`);
   // The prompt is only rebuilt on request; `key` tells which options it used
   const [built, setBuilt] = useState<{ key: string; prompt: string } | null>(
-    null,
+    () =>
+      reviewQuestions?.length
+        ? {
+            key: JSON.stringify({ options, reviewPercentage: 60 }),
+            prompt: buildReviewPrompt(options, quizId, reviewQuestions, 60),
+          }
+        : null,
   );
 
-  const optionsKey = JSON.stringify(options);
+  const promptKey = JSON.stringify({ options, reviewPercentage });
   const optionsErrors = validatePromptOptions(options);
-  const isStale = built?.key !== optionsKey;
+  const isStale = built?.key !== promptKey;
 
   const handleUpdate = () => {
     if (optionsErrors.length > 0) return;
-    setBuilt({ key: optionsKey, prompt: buildPrompt(options, quizId) });
+    setBuilt({
+      key: promptKey,
+      prompt: reviewQuestions?.length
+        ? buildReviewPrompt(options, quizId, reviewQuestions, reviewPercentage)
+        : buildPrompt(options, quizId),
+    });
   };
 
   // The title is not passed on: an empty title field keeps the JSON's own
@@ -181,6 +205,39 @@ export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
             reset={resetPromptOptions}
             describe={describePresetPrompt}
           />
+
+          {reviewQuestions?.length ? (
+            <fieldset className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <legend className="px-1 text-sm font-bold text-blue-950">
+                Review test mix
+              </legend>
+              <label
+                htmlFor="review-question-share"
+                className="flex items-center justify-between gap-4 text-sm font-semibold text-blue-950"
+              >
+                <span>
+                  Review questions: {reviewPercentage}% · New questions:{' '}
+                  {100 - reviewPercentage}%
+                </span>
+                <input
+                  id="review-question-share"
+                  type="range"
+                  min={20}
+                  max={80}
+                  step={5}
+                  value={reviewPercentage}
+                  onChange={(event) =>
+                    setReviewPercentage(Number(event.target.value))
+                  }
+                  className="w-40 accent-[#006fbf]"
+                />
+              </label>
+              <p className="mt-2 text-xs text-blue-900">
+                Adjust the balance. The prompt includes your selected mistakes
+                and asks the AI to write fresh questions without copying them.
+              </p>
+            </fieldset>
+          ) : null}
 
           <PromptOptionsForm value={options} onChange={setOptions} />
 

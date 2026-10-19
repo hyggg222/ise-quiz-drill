@@ -3,6 +3,7 @@ import type {
   QuestionType,
   TemplateMode,
 } from '../types/quiz';
+import type { SavedReviewQuestion } from '../types/review';
 
 export type DifficultyMode = 'auto' | 'easy' | 'medium' | 'hard' | 'custom';
 
@@ -230,4 +231,43 @@ Before returning, verify:
 
 ═══ STUDY MATERIAL BELOW ═══
 `;
+}
+
+export function buildReviewPrompt(
+  options: PromptOptions,
+  id: string,
+  savedQuestions: SavedReviewQuestion[],
+  reviewPercentage = 60,
+): string {
+  const prompt = buildPrompt(options, id);
+  const savedQuestionDetails = savedQuestions.map((saved) => ({
+    sourceQuiz: saved.quizTitle,
+    courseCode: saved.courseCode,
+    question: saved.question.prompt,
+    options:
+      saved.question.options?.map((option) => ({
+        id: option.id,
+        text: option.text,
+      })) ?? [],
+    correctAnswer: saved.question.correctAnswer,
+    explanation: saved.question.explanation ?? '',
+    studentWrongAnswer: saved.wrongAnswer,
+  }));
+  const instructions = `═══ TARGETED REVIEW TEST ═══
+
+- Make approximately ${reviewPercentage}% of the questions test the concepts and skills represented by the saved mistakes below.
+- Make approximately ${100 - reviewPercentage}% new questions on the same topics, grounded in the study material that follows.
+- Treat the saved questions as private study references only. Do NOT copy or closely paraphrase their stems, scenarios, options, or explanations. Write fresh questions that test the same underlying learning objectives.
+- Use the wrong answers to identify likely misunderstandings, then create useful practice that addresses them.
+- Keep all normal question-quality, source-fidelity, option, explanation, and JSON rules above.
+
+Saved mistakes (reference only; never reproduce verbatim):
+${JSON.stringify(savedQuestionDetails, null, 2)}
+
+`;
+
+  return prompt.replace(
+    '═══ STUDY MATERIAL BELOW ═══',
+    `${instructions}═══ STUDY MATERIAL BELOW ═══`,
+  );
 }

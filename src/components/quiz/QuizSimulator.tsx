@@ -34,6 +34,10 @@ import { SubmitModal } from './SubmitModal';
 export interface QuizSimulatorProps {
   quiz: QuizConfig;
   onExit?: () => void;
+  onSaveQuestion?: (
+    question: Question,
+    wrongAnswer: Answer,
+  ) => boolean | void;
   storage?: KeyValueStore;
 }
 
@@ -128,6 +132,7 @@ const QuestionItem = React.memo(function QuestionItem({
 export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
   quiz,
   onExit,
+  onSaveQuestion,
   storage = browserStorage(),
 }) => {
   const { questions, totalPages } = useMemo(() => paginate(quiz), [quiz]);
@@ -281,6 +286,7 @@ export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
         eventLog={record.eventLog}
         onRetake={handleRestartQuiz}
         onExit={onExit}
+        onSaveQuestion={onSaveQuestion}
       />
     );
   }

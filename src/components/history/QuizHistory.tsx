@@ -8,9 +8,11 @@ import {
   History,
   Play,
   PlusCircle,
+  Save,
   Trash2,
 } from 'lucide-react';
 import type { QuizAttemptRecord, QuizConfig } from '../../types/quiz';
+import type { SavedReviewQuestion } from '../../types/review';
 import {
   clearHistory,
   deleteHistoryRecord,
@@ -18,6 +20,10 @@ import {
   loadHistory,
   loadSavedQuizzes,
 } from '../../utils/attemptStorage';
+import {
+  deleteReviewQuestion,
+  loadReviewQuestions,
+} from '../../utils/reviewStorage';
 import {
   browserStorage,
   safely,
@@ -28,10 +34,11 @@ export interface QuizHistoryProps {
   onStart: (quiz: QuizConfig) => void;
   onCreate: () => void;
   onReview?: (record: QuizAttemptRecord) => void;
+  onCreateReviewTest?: (questions: SavedReviewQuestion[]) => void;
   storage?: KeyValueStore;
 }
 
-type SubTab = 'quizzes' | 'attempts';
+type SubTab = 'quizzes' | 'attempts' | 'review';
 
 const formatDuration = (secs: number) => {
   const m = Math.floor(secs / 60);
@@ -66,6 +73,7 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
   onStart,
   onCreate,
   onReview,
+  onCreateReviewTest,
   storage = browserStorage(),
 }) => {
   const [subTab, setSubTab] = useState<SubTab>('quizzes');
@@ -75,9 +83,19 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
   const [attempts, setAttempts] = useState(
     () => (storage && safely(() => loadHistory(storage))) ?? [],
   );
+  const [reviewQuestions, setReviewQuestions] = useState(
+    () => (storage && safely(() => loadReviewQuestions(storage))) ?? [],
+  );
+  const [selectedReviewIds, setSelectedReviewIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [reviewDeleteErrors, setReviewDeleteErrors] = useState<Set<string>>(
+    () => new Set(),
+  );
   const tabRefs = useRef<Record<SubTab, HTMLButtonElement | null>>({
     quizzes: null,
     attempts: null,
+    review: null,
   });
 
   const handleDeleteQuiz = (quiz: QuizConfig) => {
@@ -110,10 +128,50 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
     setAttempts([]);
   };
 
-  // Left and Right move between the two tabs, as in the ARIA tabs pattern
+  const handleDeleteReviewQuestion = (id: string): boolean => {
+    if (!storage) return false;
+    const deleted = safely(() => {
+      deleteReviewQuestion(storage, id);
+      return true;
+    });
+    if (!deleted) return false;
+    setReviewQuestions((list) => list.filter((item) => item.id !== id));
+    setSelectedReviewIds((ids) => {
+      const next = new Set(ids);
+      next.delete(id);
+      return next;
+    });
+    setReviewDeleteErrors((errors) => {
+      const next = new Set(errors);
+      next.delete(id);
+      return next;
+    });
+    return true;
+  };
+
+  const toggleReviewSelection = (id: string, selected: boolean) => {
+    setSelectedReviewIds((current) => {
+      const next = new Set(current);
+      if (selected && next.size < 15) next.add(id);
+      else if (!selected) next.delete(id);
+      return next;
+    });
+  };
+
+  const handleStartReviewTest = () => {
+    const selected = reviewQuestions.filter((item) =>
+      selectedReviewIds.has(item.id),
+    );
+    if (selected.length > 0) onCreateReviewTest?.(selected);
+  };
+
+  // Arrow keys move between the three tabs, as in the ARIA tabs pattern.
   const onTabKey = (event: KeyboardEvent) => {
     if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
-    const next: SubTab = subTab === 'quizzes' ? 'attempts' : 'quizzes';
+    const tabs: SubTab[] = ['quizzes', 'attempts', 'review'];
+    const offset = event.key === 'ArrowRight' ? 1 : -1;
+    const next =
+      tabs[(tabs.indexOf(subTab) + offset + tabs.length) % tabs.length];
     setSubTab(next);
     tabRefs.current[next]?.focus();
   };
@@ -170,6 +228,10 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
           <button {...tabProps('attempts')}>
             <History aria-hidden="true" className="w-4 h-4" /> Attempt History (
             {attempts.length})
+          </button>
+          <button {...tabProps('review')}>
+            <Save aria-hidden="true" className="w-4 h-4" /> Review (
+            {reviewQuestions.length})
           </button>
         </div>
 
@@ -391,6 +453,164 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
               ))}
             </ul>
           ))}
+
+        {subTab === 'review' && (
+          <section aria-labelledby="review-list-title" className="space-y-5">
+            <div className="flex flex-col gap-3 border-b border-gray-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h2
+                  id="review-list-title"
+                  className="text-xl font-bold text-gray-900"
+                >
+                  Questions to review
+                </h2>
+                <p className="mt-1 text-sm text-gray-600">
+                  Saved only in this browser. The most frequently missed
+                  questions appear first.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={handleStartReviewTest}
+                disabled={selectedReviewIds.size === 0 || !onCreateReviewTest}
+                className="rounded-lg bg-[#006fbf] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#005694] disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                Create review test ({selectedReviewIds.size}/15)
+              </button>
+            </div>
+
+            {reviewQuestions.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center">
+                <h3 className="text-lg font-bold text-gray-900">
+                  No questions saved yet
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  From quiz results, choose “Save for review” on a question you
+                  missed.
+                </p>
+              </div>
+            ) : (
+              <ul className="space-y-4">
+                {[...reviewQuestions]
+                  .sort((a, b) => b.timesWrong - a.timesWrong)
+                  .map((saved) => {
+                    const isSelected = selectedReviewIds.has(saved.id);
+                    const correctIds = Array.isArray(
+                      saved.question.correctAnswer,
+                    )
+                      ? saved.question.correctAnswer
+                      : [saved.question.correctAnswer];
+                    const correctAnswers = saved.question.options
+                      ? saved.question.options
+                          .filter((option) => correctIds.includes(option.id))
+                          .map((option) => option.text)
+                      : correctIds;
+                    const wrongAnswers = Array.isArray(saved.wrongAnswer)
+                      ? saved.wrongAnswer
+                      : [saved.wrongAnswer];
+                    const wrongAnswer = wrongAnswers
+                      .map(
+                        (answer) =>
+                          saved.question.options?.find(
+                            (option) => option.id === answer,
+                          )?.text ?? answer,
+                      )
+                      .join(', ');
+
+                    return (
+                      <li
+                        key={saved.id}
+                        className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <label className="flex items-start gap-3">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              disabled={
+                                !isSelected && selectedReviewIds.size >= 15
+                              }
+                              onChange={(event) =>
+                                toggleReviewSelection(
+                                  saved.id,
+                                  event.target.checked,
+                                )
+                              }
+                              aria-label={`Include question ${saved.question.number} in review test`}
+                              className="mt-1"
+                            />
+                            <span>
+                              <span className="block text-xs font-semibold text-gray-500">
+                                {saved.courseCode} · {saved.quizTitle} ·
+                                Question {saved.question.number}
+                              </span>
+                              <span className="mt-1 block font-semibold text-gray-900">
+                                {saved.question.prompt}
+                              </span>
+                            </span>
+                          </label>
+                          <div className="flex shrink-0 items-center gap-3">
+                            <span className="rounded-full bg-red-50 px-2.5 py-1 text-xs font-bold text-red-800">
+                              Wrong {saved.timesWrong}×
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!handleDeleteReviewQuestion(saved.id)) {
+                                  setReviewDeleteErrors((errors) =>
+                                    new Set(errors).add(saved.id),
+                                  );
+                                }
+                              }}
+                              aria-label={`Remove question ${saved.question.number} from review list`}
+                              className="text-sm font-semibold text-gray-500 underline hover:text-red-700"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                        {reviewDeleteErrors.has(saved.id) && (
+                          <p
+                            role="alert"
+                            className="ml-7 mt-2 text-xs text-red-700"
+                          >
+                            Could not remove this question from browser storage.
+                            Check that storage is available and try again.
+                          </p>
+                        )}
+                        <details className="ml-7 mt-4 text-sm">
+                          <summary className="cursor-pointer font-semibold text-[#006fbf]">
+                            Show answers and explanation
+                          </summary>
+                          {saved.question.options && (
+                            <ul className="mt-2 list-inside list-disc space-y-1 text-gray-700">
+                              {saved.question.options.map((option) => (
+                                <li key={option.id}>{option.text}</li>
+                              ))}
+                            </ul>
+                          )}
+                          <p className="mt-2 text-gray-700">
+                            <strong>Right answer:</strong>{' '}
+                            {correctAnswers.join(', ')}
+                          </p>
+                          <p className="mt-1 text-gray-700">
+                            <strong>Your answer:</strong>{' '}
+                            {wrongAnswer || 'No answer'}
+                          </p>
+                          {saved.question.explanation && (
+                            <p className="mt-1 text-gray-700">
+                              <strong>Explanation:</strong>{' '}
+                              {saved.question.explanation}
+                            </p>
+                          )}
+                        </details>
+                      </li>
+                    );
+                  })}
+              </ul>
+            )}
+          </section>
+        )}
       </div>
     </div>
   );

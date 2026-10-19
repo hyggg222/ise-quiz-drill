@@ -157,4 +157,47 @@ describe('AppContainer', () => {
 
     expect(screen.getByText('0 of 5 questions saved')).toBeInTheDocument();
   });
+
+  it('saves wrong answers locally and creates a review prompt from the library', async () => {
+    render(<AppContainer />);
+    await startImportedQuiz();
+    await finishQuiz();
+    await userEvent.click(
+      screen.getAllByRole('button', { name: 'Save for review' })[0],
+    );
+    await userEvent.click(
+      screen.getAllByRole('button', { name: 'Back to Creator' })[0],
+    );
+
+    await userEvent.click(
+      within(mainNav()).getByRole('button', { name: /Saved Library/ }),
+    );
+    await userEvent.click(screen.getByRole('tab', { name: 'Review (1)' }));
+
+    expect(
+      screen.getByText('What does this function return for an input of 7?'),
+    ).toBeInTheDocument();
+    await userEvent.click(
+      screen.getByRole('checkbox', {
+        name: 'Include question 1 in review test',
+      }),
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Create review test (1/15)' }),
+    );
+
+    expect(
+      screen.getByRole('heading', {
+        name: 'Step 1 · Create test content',
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((text) =>
+        text.includes('What does this function return for an input of 7?'),
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Review questions: 60% · New questions: 40%'),
+    ).toBeInTheDocument();
+  });
 });
