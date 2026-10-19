@@ -83,7 +83,25 @@ describe('QuizHistory', () => {
       within(card).getByRole('button', { name: 'Start Quiz' }),
     );
 
-    expect(h.onStart).toHaveBeenCalledWith(sampleQuiz);
+    expect(h.onStart).toHaveBeenCalledWith(sampleQuiz, false);
+  });
+
+  it('starts a saved quiz with shuffled answers when selected', async () => {
+    saveQuiz(localStorage, sampleQuiz);
+    const h = handlers();
+    render(<QuizHistory {...h} />);
+    const card = screen.getByRole('article', {
+      name: 'DevOps Basics Practice',
+    });
+
+    await userEvent.click(
+      within(card).getByRole('checkbox', { name: 'Shuffle answers' }),
+    );
+    await userEvent.click(
+      within(card).getByRole('button', { name: 'Start Quiz' }),
+    );
+
+    expect(h.onStart).toHaveBeenCalledWith(sampleQuiz, true);
   });
 
   it('deletes a saved test only after confirming', async () => {

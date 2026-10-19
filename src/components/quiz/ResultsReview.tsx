@@ -21,7 +21,7 @@ export interface ResultsReviewProps {
   answers: Record<string, Answer | undefined>;
   timeTakenSeconds: number;
   eventLog?: QuizEvent[];
-  onRetake: () => void;
+  onRetake: (shuffleAnswers: boolean) => void;
   onExit?: () => void;
   theme?: Theme;
   onThemeChange?: (theme: Theme) => void;
@@ -76,6 +76,7 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
   onThemeChange,
 }) => {
   const [filterMode, setFilterMode] = useState<FilterMode>('incorrect');
+  const [shuffleAnswers, setShuffleAnswers] = useState(false);
 
   const { results, earnedScore, totalPoints, percentage } = gradeQuiz(
     quiz,
@@ -138,11 +139,19 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
           )}
           <button
             type="button"
-            onClick={onRetake}
+            onClick={() => onRetake(shuffleAnswers)}
             className="flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold text-white bg-slate-700 hover:bg-slate-600 rounded-md border border-slate-600 transition-colors cursor-pointer"
           >
             <RotateCcw aria-hidden="true" className="w-3.5 h-3.5" /> Retake Quiz
           </button>
+          <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-200">
+            <input
+              type="checkbox"
+              checked={shuffleAnswers}
+              onChange={(event) => setShuffleAnswers(event.target.checked)}
+            />
+            Shuffle answers
+          </label>
           {onExit && (
             <button
               type="button"
@@ -427,12 +436,20 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
           <div className="flex items-center justify-center gap-4 pt-4">
             <button
               type="button"
-              onClick={onRetake}
+              onClick={() => onRetake(shuffleAnswers)}
               className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-lg border border-gray-300 text-sm transition-colors cursor-pointer flex items-center gap-2"
             >
               <RotateCcw aria-hidden="true" className="w-4 h-4 text-gray-700" />{' '}
               Retake Quiz
             </button>
+            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+              <input
+                type="checkbox"
+                checked={shuffleAnswers}
+                onChange={(event) => setShuffleAnswers(event.target.checked)}
+              />
+              Shuffle answers
+            </label>
             {onExit && (
               <button
                 type="button"

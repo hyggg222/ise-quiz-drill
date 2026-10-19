@@ -20,6 +20,7 @@ import { isAnswered, type Answer } from '../../utils/answers';
 import { appendHistory } from '../../utils/attemptStorage';
 import { gradeQuiz } from '../../utils/grading';
 import { paginate } from '../../utils/pagination';
+import { shuffleQuizAnswers } from '../../utils/shuffleAnswers';
 import {
   browserStorage,
   safely,
@@ -130,9 +131,15 @@ export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
   onExit,
   storage = browserStorage(),
 }) => {
-  const { questions, totalPages } = useMemo(() => paginate(quiz), [quiz]);
+  const [activeQuiz, setActiveQuiz] = useState(quiz);
+  const { questions, totalPages } = useMemo(
+    () => paginate(activeQuiz),
+    [activeQuiz],
+  );
   // An attempt lives in memory only: a new start or a reload is a new attempt
-  const [state, setState] = useState<AttemptState>(() => newAttempt(quiz));
+  const [state, setState] = useState<AttemptState>(() =>
+    newAttempt(activeQuiz),
+  );
   const [record, setRecord] = useState<QuizAttemptRecord | null>(null);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [toastState, setToastState] = useState<{
@@ -153,26 +160,26 @@ export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
     if (submittedRef.current) return;
     submittedRef.current = true;
     const now = Date.now();
-    const graded = gradeQuiz(quiz, state.answers);
+    const graded = gradeQuiz(activeQuiz, state.answers);
     const next: QuizAttemptRecord = {
       id: `attempt-${now}`,
-      quizId: quiz.id,
-      quizTitle: quiz.title,
-      courseCode: quiz.courseCode || 'GENERAL',
+      quizId: activeQuiz.id,
+      quizTitle: activeQuiz.title,
+      courseCode: activeQuiz.courseCode || 'GENERAL',
       timestamp: new Date(now).toISOString(),
       earnedScore: graded.earnedScore,
       totalPoints: graded.totalPoints,
       percentage: graded.percentage,
       timeTakenSeconds: Math.min(
-        quiz.timeLimitMinutes * 60,
+        activeQuiz.timeLimitMinutes * 60,
         Math.round((now - Date.parse(state.startedAt)) / 1000),
       ),
       eventLog: state.eventLog,
       answers: state.answers,
-      quizSnapshot: quiz,
+      quizSnapshot: activeQuiz,
     };
     if (storage) safely(() => appendHistory(storage, next));
-    track(quizSubmitted(quiz, next.percentage, next.timeTakenSeconds));
+    track(quizSubmitted(activeQuiz, next.percentage, next.timeTakenSeconds));
     setIsSubmitModalOpen(false);
     setRecord(next);
     // Leave fullscreen so the results are read in the normal browser window
@@ -230,19 +237,23 @@ export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
       ],
     }));
 
-  const antiCheat = useAntiCheat(quiz.antiCheat, {
+  const antiCheat = useAntiCheat(activeQuiz.antiCheat, {
     active: !submitted,
     onEvent: logAntiCheatEvent,
     onNotice: showToast,
   });
 
-  const handleRestartQuiz = () => {
-    track(quizStarted(quiz));
+  const handleRestartQuiz = (shuffleAnswers = false) => {
+    const nextQuiz = shuffleAnswers
+      ? shuffleQuizAnswers(activeQuiz)
+      : activeQuiz;
+    track(quizStarted(nextQuiz));
     submittedRef.current = false;
     warned.current.clear();
     setToastState({ message: null, isExiting: false });
     setIsTimerBlinking(false);
-    setState(newAttempt(quiz));
+    setActiveQuiz(nextQuiz);
+    setState(newAttempt(nextQuiz));
     setRecord(null);
   };
 
@@ -275,7 +286,7 @@ export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
   if (record) {
     return (
       <ResultsReview
-        quiz={quiz}
+        quiz={activeQuiz}
         answers={record.answers}
         timeTakenSeconds={record.timeTakenSeconds}
         eventLog={record.eventLog}
@@ -285,7 +296,7 @@ export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
     );
   }
 
-  const templateMode = quiz.templateMode;
+  const templateMode = activeQuiz.templateMode;
   const currentPage = state.currentPage;
   const currentQuestions =
     templateMode === 'paginated'
@@ -430,10 +441,10 @@ export const QuizSimulator: React.FC<QuizSimulatorProps> = ({
       {/* Centered container, max 1200px */}
       <div className="w-full max-w-[1200px] bg-white flex flex-col flex-1 overflow-hidden">
         <HeaderBar
-          title={quiz.title}
-          isProctored={!!quiz.antiCheat?.enabled}
+          title={activeQuiz.title}
+          isProctored={!!activeQuiz.antiCheat?.enabled}
           remainingSeconds={remainingSeconds}
-          totalSeconds={quiz.timeLimitMinutes * 60}
+          totalSeconds={activeQuiz.timeLimitMinutes * 60}
           isWarning={isTimerBlinking}
           onExit={handleExit}
         />

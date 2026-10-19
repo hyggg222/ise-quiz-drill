@@ -25,7 +25,7 @@ import {
 } from '../../utils/browserStorage';
 
 export interface QuizHistoryProps {
-  onStart: (quiz: QuizConfig) => void;
+  onStart: (quiz: QuizConfig, shuffleAnswers?: boolean) => void;
   onCreate: () => void;
   onReview?: (record: QuizAttemptRecord) => void;
   storage?: KeyValueStore;
@@ -74,6 +74,9 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
   );
   const [attempts, setAttempts] = useState(
     () => (storage && safely(() => loadHistory(storage))) ?? [],
+  );
+  const [shuffleByQuiz, setShuffleByQuiz] = useState<Set<string>>(
+    () => new Set(),
   );
   const tabRefs = useRef<Record<SubTab, HTMLButtonElement | null>>({
     quizzes: null,
@@ -264,7 +267,9 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
                   <div className="pt-4 border-t border-gray-100 flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => onStart(quiz)}
+                      onClick={() =>
+                        onStart(quiz, shuffleByQuiz.has(quiz.id))
+                      }
                       className="flex-1 px-4 py-2 bg-[#006fbf] hover:bg-[#005694] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
                     >
                       <Play
@@ -273,6 +278,21 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
                       />{' '}
                       Start Quiz
                     </button>
+                    <label className="inline-flex items-center gap-1.5 whitespace-nowrap text-[11px] font-semibold text-gray-600">
+                      <input
+                        type="checkbox"
+                        checked={shuffleByQuiz.has(quiz.id)}
+                        onChange={(event) =>
+                          setShuffleByQuiz((current) => {
+                            const next = new Set(current);
+                            if (event.target.checked) next.add(quiz.id);
+                            else next.delete(quiz.id);
+                            return next;
+                          })
+                        }
+                      />
+                      Shuffle answers
+                    </label>
                     <button
                       type="button"
                       onClick={() => exportJson(quiz)}

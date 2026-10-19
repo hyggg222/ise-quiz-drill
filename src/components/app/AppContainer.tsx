@@ -4,6 +4,7 @@ import type { QuizAttemptRecord, QuizConfig } from '../../types/quiz';
 import { quizStarted, track } from '../../utils/analytics';
 import { loadSavedQuizzes, saveQuiz } from '../../utils/attemptStorage';
 import { browserStorage, safely } from '../../utils/browserStorage';
+import { shuffleQuizAnswers } from '../../utils/shuffleAnswers';
 import { AppearanceSettings, type Theme } from './AppearanceSettings';
 import { MockTestCreator } from '../creator/MockTestCreator';
 import { QuizHistory } from '../history/QuizHistory';
@@ -55,10 +56,11 @@ export const AppContainer: React.FC = () => {
     );
   }, [viewMode, storage]);
 
-  const handleStartQuiz = (quiz: QuizConfig) => {
-    track(quizStarted(quiz));
+  const handleStartQuiz = (quiz: QuizConfig, shuffleAnswers = false) => {
+    const quizToStart = shuffleAnswers ? shuffleQuizAnswers(quiz) : quiz;
+    track(quizStarted(quizToStart));
     setReviewRecord(null);
-    setCurrentQuiz(quiz);
+    setCurrentQuiz(quizToStart);
     setViewMode('simulator');
   };
 
@@ -81,7 +83,9 @@ export const AppContainer: React.FC = () => {
           answers={reviewRecord.answers}
           timeTakenSeconds={reviewRecord.timeTakenSeconds}
           eventLog={reviewRecord.eventLog}
-          onRetake={() => handleStartQuiz(reviewRecord.quizSnapshot)}
+          onRetake={(shuffleAnswers) =>
+            handleStartQuiz(reviewRecord.quizSnapshot, shuffleAnswers)
+          }
           onExit={() => showView('history')}
           theme={theme}
           onThemeChange={setTheme}

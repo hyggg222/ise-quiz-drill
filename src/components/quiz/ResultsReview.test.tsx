@@ -141,5 +141,18 @@ describe('ResultsReview', () => {
     );
 
     expect(onRetake).toHaveBeenCalledOnce();
+    expect(onRetake).toHaveBeenCalledWith(false);
+  });
+
+  it('passes the shuffle choice to the retake handler', async () => {
+    const onRetake = vi.fn();
+    renderResults(undefined, { onRetake });
+
+    await userEvent.click(screen.getAllByLabelText('Shuffle answers')[0]);
+    await userEvent.click(
+      screen.getAllByRole('button', { name: 'Retake Quiz' })[0],
+    );
+
+    expect(onRetake).toHaveBeenCalledWith(true);
   });
 });
