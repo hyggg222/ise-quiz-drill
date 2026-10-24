@@ -36,7 +36,7 @@
         }
       ],
       "correctAnswer": "c",
-      "explanation": "Reference-type instance variables like String default to null, numeric primitive instance variables like double default to 0.0, and boolean instance variables default to false[cite: 29, 65, 68, 69]. The format specifier %.1f outputs 0.0 with one digit after the decimal point[cite: 63]."
+      "explanation": "Reference-type instance variables like String default to null, numeric primitive instance variables like double default to 0.0, and boolean instance variables default to false. The format specifier %.1f outputs 0.0 with one digit after the decimal point."
     },
     {
       "id": "q2",
@@ -70,7 +70,7 @@
         }
       ],
       "correctAnswer": "a",
-      "explanation": "Unlike instance variables, local variables are not automatically initialized by default[cite: 29]. The Java compiler issues a compilation error whenever code attempts to read a local variable that is not guaranteed to be initialized before use[cite: 64]."
+      "explanation": "Unlike instance variables, local variables are not automatically initialized by default. The Java compiler issues a compilation error whenever code attempts to read a local variable that is not guaranteed to be initialized before use."
     },
     {
       "id": "q3",
@@ -104,7 +104,7 @@
         }
       ],
       "correctAnswer": "e",
-      "explanation": "Scanner method next() reads characters only until the first whitespace character is encountered, returning \"Jane\" and leaving \" Green\" on the first line[cite: 24]. The subsequent call to nextLine() reads the remaining characters on that line up to the newline character, returning \" Green\" including the leading space[cite: 24]."
+      "explanation": "Scanner method next() reads characters only until the first whitespace character is encountered, returning \"Jane\" and leaving \" Green\" on the first line. The subsequent call to nextLine() reads the remaining characters on that line up to the newline character, returning \" Green\" including the leading space."
     },
     {
       "id": "q4",
@@ -138,7 +138,7 @@
         }
       ],
       "correctAnswer": "b",
-      "explanation": "The instance variable count is of primitive type int, which stores a single value rather than a reference to an object[cite: 68, 69]. A primitive-type variable cannot be used to invoke methods, causing a compile-time error on test.count.toString()[cite: 69]."
+      "explanation": "The instance variable count is of primitive type int, which stores a single value rather than a reference to an object. A primitive-type variable cannot be used to invoke methods, causing a compile-time error on test.count.toString()."
     },
     {
       "id": "q5",
@@ -172,7 +172,7 @@
         }
       ],
       "correctAnswer": "d",
-      "explanation": "When a class declares a custom constructor, the Java compiler does not create a default no-argument constructor for that class[cite: 49]. Consequently, calling new Account() with no arguments causes a compilation error[cite: 30, 49]."
+      "explanation": "When a class declares a custom constructor, the Java compiler does not create a default no-argument constructor for that class. Consequently, calling new Account() with no arguments causes a compilation error."
     },
     {
       "id": "q6",
@@ -206,7 +206,7 @@
         }
       ],
       "correctAnswer": "b",
-      "explanation": "In the constructor, name = name assigns the local parameter to itself rather than updating this.name, leaving the instance variable name as \"Default\"[cite: 9, 16, 18]. The negative initial balance (-20.0) and negative deposit (-10.0) are ignored by the > 0.0 checks, so only 35.5 is added and formatted by %.2f as 35.50[cite: 55, 56, 63]."
+      "explanation": "In the constructor, name = name assigns the local parameter to itself rather than updating this.name, leaving the instance variable name as \"Default\". The negative initial balance (-20.0) and negative deposit (-10.0) are ignored by the > 0.0 checks, so only 35.5 is added and formatted by %.2f as 35.50."
     },
     {
       "id": "q7",
@@ -240,7 +240,7 @@
         }
       ],
       "correctAnswer": "e",
-      "explanation": "Reference variables a1 and a2 refer to the same Account object in memory, so a2.deposit(cash) updates that object's balance to 25.256[cite: 56, 69]. Because method parameters are local variables, setting amount = 0.0 does not affect cash in main, and %.2f rounds both values to two decimal places as 25.26 and 15.26[cite: 16, 63]."
+      "explanation": "Reference variables a1 and a2 refer to the same Account object in memory, so a2.deposit(cash) updates that object's balance to 25.256. Because method parameters are local variables, setting amount = 0.0 does not affect cash in main, and %.2f rounds both values to two decimal places as 25.26 and 15.26."
     },
     {
       "id": "q8",
@@ -274,7 +274,7 @@
         }
       ],
       "correctAnswer": "a",
-      "explanation": "Constructors cannot specify return types, so public void Account(String, double) is a regular method rather than a constructor, and the compiler still provides a default no-argument constructor that initializes name to null and balance to 0.0[cite: 29, 49, 65]. Calling deposit(10) invokes deposit(int) (adding 20) and deposit(5.5) invokes deposit(double) (adding 5.5), yielding null 25.5[cite: 30, 54]."
+      "explanation": "Constructors cannot specify return types, so public void Account(String, double) is a regular method rather than a constructor, and the compiler still provides a default no-argument constructor that initializes name to null and balance to 0.0. Calling deposit(10) invokes deposit(int) (adding 20) and deposit(5.5) invokes deposit(double) (adding 5.5), yielding null 25.5."
     },
     {
       "id": "q9",
@@ -308,7 +308,7 @@
         }
       ],
       "correctAnswer": "c",
-      "explanation": "The reference-type instance variable primary is not explicitly initialized, so it receives the default value null[cite: 69]. When transferTo attempts to evaluate target.balance on that null reference after subtracting amount from backup.balance, a NullPointerException is thrown at runtime[cite: 69]."
+      "explanation": "The reference-type instance variable primary is not explicitly initialized, so it receives the default value null. When transferTo attempts to evaluate target.balance on that null reference after subtracting amount from backup.balance, a NullPointerException is thrown at runtime."
     },
     {
       "id": "q10",
@@ -342,7 +342,7 @@
         }
       ],
       "correctAnswer": "d",
-      "explanation": "Arguments are evaluated left-to-right: acc.applyBonus(50) calls applyBonus(int) where integer division 50 / 100 evaluates to 0, leaving balance at 200.0[cite: 30, 68]. Next, acc.applyBonus(10.0) calls applyBonus(double) where 10.0 / 100 is 0.10, updating balance to 220.0 before the third argument acc.balance is evaluated[cite: 54, 63]."
+      "explanation": "Arguments are evaluated left-to-right: acc.applyBonus(50) calls applyBonus(int) where integer division 50 / 100 evaluates to 0, leaving balance at 200.0. Next, acc.applyBonus(10.0) calls applyBonus(double) where 10.0 / 100 is 0.10, updating balance to 220.0 before the third argument acc.balance is evaluated."
     }
   ]
 }

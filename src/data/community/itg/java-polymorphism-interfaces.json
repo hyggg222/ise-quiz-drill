@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792847596026",
+  "title": "Java Slide 10",
+  "courseCode": "ITP",
+  "description": "Practice test covering Java polymorphism, dynamic binding, abstract classes, interface inheritance, downcasting, and Java 8/9 interface enhancements.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "abstract class Animal {\n    public abstract void makeNoise();\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Animal a = new Animal();\n        a.makeNoise();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Runtime error: InstantiationException"
+        },
+        {
+          "id": "b",
+          "text": "The code compiles and runs but produces no output"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error: Animal is abstract; cannot be instantiated"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error: Animal does not have a body for makeNoise()"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error: AbstractMethodError"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "Abstract classes serve solely as a foundation for subclasses and cannot be instantiated, resulting in a compilation error."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "interface Constants {\n    int MAX = 10;\n}\n\npublic class Test implements Constants {\n    public static void main(String[] args) {\n        MAX = 20;\n        System.out.print(MAX);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "20"
+        },
+        {
+          "id": "b",
+          "text": "10"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error: MAX is not defined in Test"
+        },
+        {
+          "id": "d",
+          "text": "Runtime error: IllegalAccessException"
+        },
+        {
+          "id": "e",
+          "text": "Compilation error: cannot assign a value to final variable MAX"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "All fields declared within a Java interface are implicitly public, static, and final, meaning their values cannot be reassigned."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Employee {\n    public String toString() { return \"Employee \"; }\n}\n\nclass SalariedEmployee extends Employee {\n    public String toString() { return \"Salaried \"; }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Employee e = new SalariedEmployee();\n        System.out.print(e.toString());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Employee"
+        },
+        {
+          "id": "b",
+          "text": "Salaried"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error: incompatible types"
+        },
+        {
+          "id": "d",
+          "text": "Runtime error: ClassCastException"
+        },
+        {
+          "id": "e",
+          "text": "Employee Salaried"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Due to dynamic binding (or late binding), the execution-time type of the object (SalariedEmployee) determines the method implementation to execute, not the variable's reference type (Employee)."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Employee {\n    public void work() { System.out.print(\"Working \"); }\n}\n\nclass SalariedEmployee extends Employee {\n    public void paySalary() { System.out.print(\"Paid \"); }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Employee e = new SalariedEmployee();\n        e.work();\n        e.paySalary();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Working Paid"
+        },
+        {
+          "id": "b",
+          "text": "Working"
+        },
+        {
+          "id": "c",
+          "text": "Runtime error: NoSuchMethodError"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error: cannot find symbol paySalary() in class Employee"
+        },
+        {
+          "id": "e",
+          "text": "Compilation error: incompatible types in assignment"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Although a superclass variable can reference a subclass object, the compiler restricts the variable to accessing only methods declared in the superclass type."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Employee {}\nclass HourlyEmployee extends Employee {}\nclass SalariedEmployee extends Employee {}\n\npublic class Test {\n    public static void main(String[] args) {\n        Employee e = new HourlyEmployee();\n        SalariedEmployee se = (SalariedEmployee) e;\n        System.out.print(\"Done\");\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Runtime error: ClassCastException"
+        },
+        {
+          "id": "b",
+          "text": "Done"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error: incomparable types"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error: incompatible types Employee cannot be converted to SalariedEmployee"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error: NullPointerException"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "The code successfully compiles because a downcast is syntactically valid from a superclass to a subclass. However, at execution time, the object is an HourlyEmployee, which lacks an is-a relationship with SalariedEmployee, throwing a ClassCastException."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Super {\n    public final void print() { System.out.print(\"Super \"); }\n}\n\nclass Sub extends Super {\n    public void print() { System.out.print(\"Sub \"); }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Super s = new Sub();\n        s.print();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Super"
+        },
+        {
+          "id": "b",
+          "text": "Sub"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error: print() in Sub cannot override print() in Super"
+        },
+        {
+          "id": "d",
+          "text": "Runtime error: IllegalAccessError"
+        },
+        {
+          "id": "e",
+          "text": "Super Sub"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "A method declared as final cannot be overridden in a subclass. Attempting to override it results in a strict compilation error."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "interface Payable {\n    default void process() { System.out.print(\"Payable \"); }\n}\n\nclass Invoice implements Payable { }\n\nclass Employee implements Payable {\n    public void process() { System.out.print(\"Employee \"); }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Payable p1 = new Invoice();\n        Payable p2 = new Employee();\n        p1.process();\n        p2.process();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Employee Employee"
+        },
+        {
+          "id": "b",
+          "text": "Payable Payable"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error: Invoice is not abstract and does not override abstract method process()"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error: Employee process() must be marked default"
+        },
+        {
+          "id": "e",
+          "text": "Payable Employee"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Java 8 allows interfaces to provide default implementations. Because Invoice does not override process(), it inherits the default behavior. Employee successfully overrides it to print its specific string."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class SuperClass {\n    public SuperClass() {\n        init();\n    }\n    public void init() {\n        System.out.print(\"SuperInit \");\n    }\n}\n\nclass SubClass extends SuperClass {\n    private int value = 10;\n    public void init() {\n        System.out.print(\"SubInit:\" + value + \" \");\n    }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        SubClass s = new SubClass();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "SuperInit SubInit:10"
+        },
+        {
+          "id": "b",
+          "text": "SubInit:0"
+        },
+        {
+          "id": "c",
+          "text": "SubInit:10"
+        },
+        {
+          "id": "d",
+          "text": "SuperInit"
+        },
+        {
+          "id": "e",
+          "text": "Compilation error: init() in SubClass cannot be called from SuperClass constructor"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Calling an overridable method from a constructor leads to the subclass's overriding method running before the subclass variables are initialized. Therefore, 'value' holds its default primitive value of 0."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "interface Calculator {\n    static int multiply(int a, int b) { return a * b; }\n    default int add(int a, int b) { return a + b + helper(); }\n    private int helper() { return 5; }\n}\n\nclass BasicCalculator implements Calculator {}\n\npublic class Test {\n    public static void main(String[] args) {\n        BasicCalculator calc = new BasicCalculator();\n        System.out.print(Calculator.multiply(2, 3) + \" \");\n        System.out.print(calc.multiply(2, 3));\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "6 6"
+        },
+        {
+          "id": "b",
+          "text": "Compilation error: private methods are not allowed in interfaces"
+        },
+        {
+          "id": "c",
+          "text": "Runtime error: UnsupportedOperationException"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error: cannot find symbol multiply(int,int) on calc"
+        },
+        {
+          "id": "e",
+          "text": "6 5"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Unlike static methods in classes, static interface methods are not inherited by implementing classes. They must be invoked strictly via the interface name (Calculator.multiply), meaning calc.multiply(2,3) causes a compilation error."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "interface Payable {\n    double getPaymentAmount();\n}\n\nclass Invoice implements Payable {\n    public double getPaymentAmount() { return 150.0; }\n    public String getVendor() { return \"VendorCorp\"; }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Payable[] payables = { new Invoice() };\n        for (Payable p : payables) {\n            System.out.print(p.getClass().getSimpleName() + \" \");\n            System.out.print(((Invoice) p).getVendor() + \" \");\n            System.out.print(p.getVendor());\n        }\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compilation error: cannot find symbol getVendor() in interface Payable"
+        },
+        {
+          "id": "b",
+          "text": "Invoice VendorCorp VendorCorp"
+        },
+        {
+          "id": "c",
+          "text": "Payable VendorCorp VendorCorp"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error: cannot find symbol getClass() in interface Payable"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error: ClassCastException"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "A variable of an interface type can polymorphically call methods declared in the interface and inherited methods from Object (like getClass). However, it cannot call subclass-specific methods like getVendor() without an explicit downcast."
+    }
+  ]
+}

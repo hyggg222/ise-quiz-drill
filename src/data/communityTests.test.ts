@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { communityTests, loadCommunity } from './communityTests';
+import { byTitle, communityTests, loadCommunity } from './communityTests';
 import { applyPresetConfig, presets } from '../utils/presets';
 import { sampleQuiz } from './sampleQuiz';
 
@@ -22,7 +22,24 @@ describe('community tests', () => {
   it('lists the tests by title', () => {
     const titles = communityTests.map((test) => test.title);
 
-    expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b)));
+    expect(titles).toEqual([...titles].sort(byTitle));
+  });
+
+  it('keeps no source citation marks in the questions', () => {
+    const cited = communityTests.filter((test) =>
+      JSON.stringify(test).includes('[cite'),
+    );
+
+    expect(cited.map((test) => test.id)).toEqual([]);
+  });
+
+  it('puts number 2 before number 10 in the titles', () => {
+    const titles = loadCommunity({
+      './community/itg/b.json': { ...sampleQuiz, title: 'Java Slide 10' },
+      './community/itg/a.json': { ...sampleQuiz, title: 'Java Slide 2' },
+    }).map((test) => test.title);
+
+    expect(titles).toEqual(['Java Slide 2', 'Java Slide 10']);
   });
 
   it('applies the settings of the preset its folder names, keeping its title', () => {

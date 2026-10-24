@@ -1,0 +1,348 @@
+{
+  "id": "quiz-chapter6-methods-java",
+  "title": "Java Slide 6",
+  "courseCode": "ITP",
+  "description": "Practice test covering Java static methods, method-call stacks, argument promotion, SecureRandom, enum types, scope, and method overloading.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Review the following Java code. What is the exact result when this program is executed?",
+      "codeSnippet": "public class MathTest {\n    public static void main(String[] args) {\n        double result = Math.max(Math.abs(-5.5), Math.floor(5.9));\n        System.out.println(result);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "5.9"
+        },
+        {
+          "id": "b",
+          "text": "5.5"
+        },
+        {
+          "id": "c",
+          "text": "-5.5"
+        },
+        {
+          "id": "d",
+          "text": "5.0"
+        },
+        {
+          "id": "e",
+          "text": "6.0"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Math.abs(-5.5) evaluates to 5.5. Math.floor(5.9) evaluates to the largest integer not greater than 5.9, which is 5.0. Math.max(5.5, 5.0) returns the larger value, resulting in 5.5."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Analyze the following snippet that uses an enum type to track game status. What is the exact output?",
+      "codeSnippet": "public class EnumTest {\n    private enum Status { CONTINUE, WON, LOST };\n\n    public static void main(String[] args) {\n        int gameStatus = 1;\n        if (gameStatus == Status.WON) {\n            System.out.println(\"Player wins\");\n        } else {\n            System.out.println(\"Keep playing\");\n        }\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compilation error"
+        },
+        {
+          "id": "b",
+          "text": "Player wins"
+        },
+        {
+          "id": "c",
+          "text": "Keep playing"
+        },
+        {
+          "id": "d",
+          "text": "Runtime exception"
+        },
+        {
+          "id": "e",
+          "text": "1"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Java does not allow an int literal or variable to be directly compared to an enum constant. Attempting to use the '==' operator between an int and an enum type causes a compilation error."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Look at the method overloading example below. What exact string will be printed to the console?",
+      "codeSnippet": "public class OverloadTest {\n    public static void printVal(int x) {\n        System.out.print(\"Int: \" + x);\n    }\n    \n    public static void printVal(double x) {\n        System.out.print(\"Double: \" + x);\n    }\n    \n    public static void main(String[] args) {\n        printVal(7);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Double: 7.0"
+        },
+        {
+          "id": "b",
+          "text": "Int: 7.0"
+        },
+        {
+          "id": "c",
+          "text": "Double: 7"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error"
+        },
+        {
+          "id": "e",
+          "text": "Int: 7"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "The literal 7 is treated as an int. The compiler successfully matches this exactly to the method signature requiring an int, so it invokes the printVal(int x) method."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Evaluate the scope of the variables in the following code block. What is the exact result?",
+      "codeSnippet": "public class ScopeTest {\n    public static void main(String[] args) {\n        for (int i = 0; i < 2; i++) {\n            int x = i * 2;\n        }\n        System.out.println(x);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "2"
+        },
+        {
+          "id": "b",
+          "text": "4"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error"
+        },
+        {
+          "id": "d",
+          "text": "0"
+        },
+        {
+          "id": "e",
+          "text": "Runtime exception"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "The local variable x is declared inside the block of the for loop. Its scope ends exactly at the closing brace of that block, making it inaccessible to the print statement outside, causing a compilation error."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Review the usage of SecureRandom below. What is the exact output of this program?",
+      "codeSnippet": "import java.security.SecureRandom;\n\npublic class RandomTest {\n    public static void main(String[] args) {\n        SecureRandom random = new SecureRandom();\n        int val = random.nextInt(1);\n        System.out.println(val + 5);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "6"
+        },
+        {
+          "id": "b",
+          "text": "5"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error"
+        },
+        {
+          "id": "d",
+          "text": "1"
+        },
+        {
+          "id": "e",
+          "text": "A random number between 0 and 5"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "The nextInt(int x) method returns a random integer from 0 up to, but excluding, the value of x. Therefore, nextInt(1) will exclusively return 0. Adding 5 results deterministically in 5."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Determine the exact printed output based on Java's string concatenation rules.",
+      "codeSnippet": "public class ConcatTest {\n    public static void main(String[] args) {\n        int a = 3;\n        int b = 4;\n        System.out.println(a + b + \" and \" + a + b);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "7 and 7"
+        },
+        {
+          "id": "b",
+          "text": "34 and 34"
+        },
+        {
+          "id": "c",
+          "text": "34 and 7"
+        },
+        {
+          "id": "d",
+          "text": "7 and 34"
+        },
+        {
+          "id": "e",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Java evaluates the '+' operator left-to-right. First, 3 + 4 evaluates to 7. Then, 7 is concatenated with \" and \" yielding \"7 and \". Next, \"7 and \" + 3 yields \"7 and 3\", and finally adding 4 yields \"7 and 34\"."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Consider how Java handles argument promotion and casting in the following code. What is the exact output?",
+      "codeSnippet": "public class PromotionTest {\n    public static void print(double x) {\n        System.out.print(\"double: \" + x);\n    }\n    \n    public static void print(float x) {\n        System.out.print(\"float: \" + x);\n    }\n    \n    public static void main(String[] args) {\n        int a = 5;\n        print((float) a + 0.5);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "float: 5.5"
+        },
+        {
+          "id": "b",
+          "text": "float: 5.0"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error"
+        },
+        {
+          "id": "d",
+          "text": "double: 5.0"
+        },
+        {
+          "id": "e",
+          "text": "double: 5.5"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "The integer a is cast to a float (5.0f). However, the literal 0.5 is a double by default. During addition, the float is promoted to the higher type (double). The result is a double, which safely calls the print(double x) method."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Observe the interaction between the class field and the local variable. What is the exact output of this program?",
+      "codeSnippet": "public class ShadowTest {\n    private static int x = 10;\n    \n    public static void modify() {\n        int x = 5;\n        x *= 2;\n    }\n    \n    public static void main(String[] args) {\n        modify();\n        System.out.println(x);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "10"
+        },
+        {
+          "id": "b",
+          "text": "5"
+        },
+        {
+          "id": "c",
+          "text": "20"
+        },
+        {
+          "id": "d",
+          "text": "0"
+        },
+        {
+          "id": "e",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "The modify method declares a local variable x, which temporarily shadows the class field x. The multiplication modifies only the local variable. The class field x is unaffected and remains 10 when printed in main."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "Examine the overloaded method declarations below. What is the exact outcome when attempting to run this class?",
+      "codeSnippet": "public class OverloadTrap {\n    public static int calculate(int x, int y) {\n        return x + y;\n    }\n    \n    public static double calculate(int a, int b) {\n        return a * b;\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(calculate(2, 3));\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "5"
+        },
+        {
+          "id": "b",
+          "text": "6.0"
+        },
+        {
+          "id": "c",
+          "text": "5.0"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error"
+        },
+        {
+          "id": "e",
+          "text": "6"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "The compiler distinguishes overloaded methods strictly by their signature (name and parameters). Return types are not considered part of the signature. Declaring two methods with identical parameter lists causes a compilation error."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "Carefully trace the recursive execution of the factorial method. What is the exact result?",
+      "codeSnippet": "public class StackTest {\n    public static int factorial(int n) {\n        if (n == 0) {\n            return 1;\n        }\n        return n * factorial(n);\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(factorial(3));\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "6"
+        },
+        {
+          "id": "b",
+          "text": "Compilation error"
+        },
+        {
+          "id": "c",
+          "text": "Stack overflow runtime error"
+        },
+        {
+          "id": "d",
+          "text": "0"
+        },
+        {
+          "id": "e",
+          "text": "24"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "The recursive method call passes n instead of n - 1. Because the parameter never decreases, it will never reach the base case of n == 0. This results in infinite method calls, eventually exhausting the method-call stack."
+    }
+  ]
+}

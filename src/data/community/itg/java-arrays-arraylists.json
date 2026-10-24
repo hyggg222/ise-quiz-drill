@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792847596026",
+  "title": "Java Slide 7",
+  "courseCode": "ITP",
+  "description": "Comprehensive practice test covering Java arrays, multidimensional arrays, pass-by-value mechanics, varargs, exception handling, and ArrayLists.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void main(String[] args) {\n        int[] arr = new int[3];\n        arr[1] = 5;\n        System.out.print(arr[0] + \" \" + arr[2]);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "0 0"
+        },
+        {
+          "id": "b",
+          "text": "null null"
+        },
+        {
+          "id": "c",
+          "text": "5 5"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "When an array of a primitive numeric type is created using 'new', all elements automatically receive the default value of 0."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void main(String[] args) {\n        final int[] numbers = {10, 20, 30};\n        numbers[0] = 40;\n        System.out.print(numbers[0]);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compilation error: cannot assign a value to final variable"
+        },
+        {
+          "id": "b",
+          "text": "10"
+        },
+        {
+          "id": "c",
+          "text": "30"
+        },
+        {
+          "id": "d",
+          "text": "Runtime error"
+        },
+        {
+          "id": "e",
+          "text": "40"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "The 'final' keyword on an array variable means the reference cannot be reassigned to a new array object, but the internal elements of the array can still be modified."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void main(String[] args) {\n        int[] data = {1, 2, 3};\n        for (int val : data) {\n            val = val * 2;\n        }\n        System.out.print(data[0] + \" \" + data[1]);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "2 4"
+        },
+        {
+          "id": "b",
+          "text": "1 2"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error"
+        },
+        {
+          "id": "d",
+          "text": "0 0"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "The enhanced for statement provides a copy of each primitive element. Modifying the loop parameter 'val' does not alter the original array."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void printCount(String... args) {\n        System.out.print(args.length);\n    }\n    public static void main(String[] args) {\n        printCount(\"A\", \"B\", \"C\");\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "3"
+        },
+        {
+          "id": "b",
+          "text": "0"
+        },
+        {
+          "id": "c",
+          "text": "2"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error"
+        },
+        {
+          "id": "e",
+          "text": "4"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "A variable-length argument list (varargs) internally treats the provided arguments as an array. The array 'args' contains the 3 string arguments passed to it."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void main(String[] args) {\n        int[][] grid = new int[2][];\n        grid[0] = new int[2];\n        grid[1] = new int[3];\n        grid[0][1] = 1;\n        grid[1][1] = 2;\n        System.out.print(grid[0].length + \" \" + grid[1][2]);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "2 2"
+        },
+        {
+          "id": "b",
+          "text": "3 0"
+        },
+        {
+          "id": "c",
+          "text": "2 0"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error"
+        },
+        {
+          "id": "e",
+          "text": "ArrayIndexOutOfBoundsException"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "Row 0 has a length of 2. Row 1 has a length of 3, and its elements default to 0. Since grid[1][2] was not explicitly assigned, it retains the default value of 0."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void main(String[] args) {\n        int[] vals = {10, 20};\n        int result = 0;\n        try {\n            result = vals[2];\n        } catch (ArrayIndexOutOfBoundsException e) {\n            result = 5;\n        }\n        result += vals[0];\n        System.out.print(result);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "10"
+        },
+        {
+          "id": "b",
+          "text": "5"
+        },
+        {
+          "id": "c",
+          "text": "Compilation error: result may not have been initialized"
+        },
+        {
+          "id": "d",
+          "text": "15"
+        },
+        {
+          "id": "e",
+          "text": "ArrayIndexOutOfBoundsException is thrown and program crashes"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Accessing vals[2] throws an exception, transferring control to the catch block where result is set to 5. The program successfully continues execution, adding vals[0] (which is 10) to yield 15."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "import java.util.ArrayList;\npublic class Test {\n    public static void main(String[] args) {\n        ArrayList<String> list = new ArrayList<>();\n        list.add(\"A\");\n        list.add(\"B\");\n        list.add(1, \"C\");\n        list.remove(0);\n        System.out.print(list.get(0) + list.get(1));\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "AC"
+        },
+        {
+          "id": "b",
+          "text": "BC"
+        },
+        {
+          "id": "c",
+          "text": "AB"
+        },
+        {
+          "id": "d",
+          "text": "IndexOutOfBoundsException"
+        },
+        {
+          "id": "e",
+          "text": "CB"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Adding 'C' at index 1 shifts 'B' to index 2 (list becomes [A, C, B]). Removing at index 0 deletes 'A' and shifts the remaining elements left, making the list [C, B]."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void modify(int[] arr) {\n        arr[0] = 99;\n        arr = new int[]{1, 2, 3};\n        arr[0] = 100;\n    }\n    public static void main(String[] args) {\n        int[] myArr = {10, 20};\n        modify(myArr);\n        System.out.print(myArr[0]);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "10"
+        },
+        {
+          "id": "b",
+          "text": "99"
+        },
+        {
+          "id": "c",
+          "text": "100"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Java strictly passes reference values by copy. Modifying 'arr[0]' initially mutates the caller's array. Reassigning 'arr' to a new array inside the method only changes the local copy of the reference, not 'myArr' in main."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "public class Test {\n    public static void main(String[] args) {\n        short s = 2;\n        int[] arr = new int[5];\n        arr[s] = 10;\n        long index = 2L;\n        arr[(int)index] = 20;\n        System.out.print(arr[index]);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "10"
+        },
+        {
+          "id": "b",
+          "text": "20"
+        },
+        {
+          "id": "c",
+          "text": "0"
+        },
+        {
+          "id": "d",
+          "text": "Compilation error: incompatible types for array index"
+        },
+        {
+          "id": "e",
+          "text": "ArrayIndexOutOfBoundsException"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Array indices must be of type int (or types promotable to int like short or byte). Attempting to use a long variable directly as an index, as in 'arr[index]', results in a compilation error."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result of compiling and executing the following Java code?",
+      "codeSnippet": "class Card {\n    String face;\n    Card(String f) { face = f; }\n    public String toString() { return face; }\n}\npublic class Test {\n    public static void main(String[] args) {\n        Card[] deck = new Card[2];\n        deck[0] = new Card(\"Ace\");\n        try {\n            System.out.printf(\"%s %s\", deck[0], deck[1].toString());\n        } catch (NullPointerException e) {\n            System.out.print(\"NPE \");\n        }\n        System.out.printf(\"%03d\", deck.length);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Ace null 002"
+        },
+        {
+          "id": "b",
+          "text": "NPE 2"
+        },
+        {
+          "id": "c",
+          "text": "NPE 002"
+        },
+        {
+          "id": "d",
+          "text": "Ace NPE 002"
+        },
+        {
+          "id": "e",
+          "text": "Compilation error"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "Since deck[1] is uninitialized (null), deck[1].toString() triggers a NullPointerException before printf executes, preventing partial string output. The catch prints 'NPE '. Next, deck.length (2) formatted with %03d correctly prints '002'."
+    }
+  ]
+}
