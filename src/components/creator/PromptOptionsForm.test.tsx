@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { PromptOptionsForm } from './PromptOptionsForm';
 import {
   defaultPromptOptions,
+  easyToHardText,
   type PromptOptions,
 } from '../../utils/promptBuilder';
 
@@ -249,6 +250,17 @@ describe('PromptOptionsForm', () => {
       await userEvent.click(box);
     }
     expect(last(onChange).types).toEqual([]);
+  });
+
+  it('adds the easy to hard instruction to the notes like the other presets', async () => {
+    const onChange = vi.fn();
+    render(<Harness onChange={onChange} />);
+
+    await userEvent.click(
+      screen.getByRole('button', { name: '+ Order Easy to Hard' }),
+    );
+
+    expect(last(onChange).notes).toBe(easyToHardText);
   });
 
   it('adds preset instructions to the notes', async () => {

@@ -31,10 +31,17 @@ const paste = (text: string) =>
   });
 
 // The creator owns the text and the parse result; this stands in for it
-function Harness() {
+function Harness({ warnings }: { warnings?: string[] }) {
   const [value, setValue] = useState('');
   const result = value.trim() ? parseQuizJson(value, settings) : null;
-  return <JsonImporter value={value} onChange={setValue} result={result} />;
+  return (
+    <JsonImporter
+      value={value}
+      onChange={setValue}
+      result={result}
+      warnings={warnings}
+    />
+  );
 }
 
 describe('JsonImporter', () => {
@@ -143,5 +150,30 @@ describe('JsonImporter', () => {
         'Total Questions: 5',
       ),
     );
+  });
+
+  it('shows the warnings under the valid-JSON message, which stays', () => {
+    render(<Harness warnings={['Asked for 9 questions, got 5.', 'Odd.']} />);
+    paste(JSON.stringify(sampleQuiz));
+
+    const warnings = screen.getByRole('status', { name: 'Import warnings' });
+    expect(warnings).toHaveTextContent('Asked for 9 questions, got 5.');
+    expect(warnings).toHaveTextContent('Odd.');
+    expect(screen.getByText(sampleQuiz.title)).toBeInTheDocument();
+    expect(screen.getByText(/Total Questions/)).toBeInTheDocument();
+  });
+
+  it('shows no warning box without warnings, or while the JSON is invalid', () => {
+    const { rerender } = render(<Harness warnings={[]} />);
+    paste(JSON.stringify(sampleQuiz));
+    expect(
+      screen.queryByRole('status', { name: 'Import warnings' }),
+    ).toBeNull();
+
+    rerender(<Harness warnings={['Odd.']} />);
+    paste('{"title": "Oops",');
+    expect(
+      screen.queryByRole('status', { name: 'Import warnings' }),
+    ).toBeNull();
   });
 });

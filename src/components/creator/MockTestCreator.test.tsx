@@ -4,6 +4,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MockTestCreator } from './MockTestCreator';
 import { sampleQuiz } from '../../data/sampleQuiz';
+import { easyToHardText } from '../../utils/promptBuilder';
 import { presets } from '../../utils/presets';
 
 const promptBox = () =>
@@ -164,6 +165,23 @@ describe('MockTestCreator', () => {
     expect(promptBox()).toHaveTextContent('Total Questions: 12');
   });
 
+  it('marks the prompt out of date when the easy to hard chip is added', async () => {
+    render(<MockTestCreator onStart={() => {}} />);
+    await fillOptions();
+    await userEvent.click(updateButton());
+    expect(promptBox()).not.toHaveTextContent('easiest to hardest');
+
+    await userEvent.click(
+      screen.getByRole('button', { name: '+ Order Easy to Hard' }),
+    );
+
+    expect(updateButton()).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Copy Locked' })).toBeDisabled();
+
+    await userEvent.click(updateButton());
+    expect(promptBox()).toHaveTextContent('easiest to hardest');
+  });
+
   it('keeps everything typed when moving between the steps', async () => {
     render(<MockTestCreator onStart={() => {}} />);
     await fillOptions('12');
@@ -266,6 +284,81 @@ describe('MockTestCreator', () => {
     expect(startButton()).toBeDisabled();
   });
 
+  describe('import warnings', () => {
+    const warnings = () =>
+      screen.queryByRole('status', { name: 'Import warnings' });
+    // Easy, hard, easy again, all multiple choice
+    const quizOf = (count: number) =>
+      JSON.stringify({
+        ...sampleQuiz,
+        questions: sampleQuiz.questions.slice(0, count).map((q, index) => ({
+          ...q,
+          type: 'mcq',
+          options: sampleQuiz.questions[0].options,
+          correctAnswer: sampleQuiz.questions[0].correctAnswer,
+          difficulty: ['easy', 'hard', 'easy'][index % 3],
+        })),
+      });
+
+    it('warns against the options of the built prompt and leaves Start enabled', async () => {
+      render(<MockTestCreator onStart={() => {}} />);
+      await fillOptions('10');
+      await userEvent.click(
+        screen.getByRole('button', { name: '+ Order Easy to Hard' }),
+      );
+      await userEvent.click(updateButton());
+      await toStep2();
+      paste(quizOf(3));
+
+      expect(warnings()).toHaveTextContent('Asked for 10 questions, got 3.');
+      expect(warnings()).toHaveTextContent(
+        'Not in easy-to-hard order: question 3.',
+      );
+      expect(screen.getByText(/Total Questions/)).toBeInTheDocument();
+      expect(startButton()).toBeEnabled();
+    });
+
+    it('shows none when no prompt was built', async () => {
+      render(<MockTestCreator onStart={() => {}} />);
+      await toStep2();
+      paste(quizOf(3));
+
+      expect(warnings()).toBeNull();
+      expect(startButton()).toBeEnabled();
+    });
+
+    it('shows none when only a preset was applied', async () => {
+      render(<MockTestCreator onStart={() => {}} />);
+      await userEvent.selectOptions(
+        screen.getByLabelText('Exam preset (optional)'),
+        presets[0].id,
+      );
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Apply preset' }),
+      );
+      await toStep2();
+      paste(quizOf(3));
+
+      expect(warnings()).toBeNull();
+    });
+
+    it('follows the built prompt, not a form changed after building', async () => {
+      render(<MockTestCreator onStart={() => {}} />);
+      await fillOptions('3');
+      await userEvent.click(updateButton());
+      const count = screen.getByLabelText('Number of Questions');
+      await userEvent.clear(count);
+      await userEvent.type(count, '7');
+      await userEvent.click(
+        screen.getByRole('button', { name: '+ Order Easy to Hard' }),
+      );
+      await toStep2();
+      paste(quizOf(3));
+
+      expect(warnings()).toBeNull();
+    });
+  });
+
   describe('presets', () => {
     const preset = presets[0];
     // Step 1 has another status line, in the prompt box
@@ -296,6 +389,46 @@ describe('MockTestCreator', () => {
       await userEvent.clear(count);
       await userEvent.type(count, '7');
       expect(count).toHaveValue(7);
+    });
+
+    it('puts easy to hard in the notes for ITG and leaves DevOps without it', async () => {
+      render(<MockTestCreator onStart={() => {}} />);
+      const notes = () =>
+        screen.getByLabelText(/Special Instructions/) as HTMLTextAreaElement;
+
+      await pick('itg');
+      expect(notes().value).toContain(easyToHardText);
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Reset to defaults' }),
+      );
+      await pick('devops');
+      expect(notes().value).not.toContain(easyToHardText);
+    });
+
+    it('shows the difficulty mix of the applied preset', async () => {
+      render(<MockTestCreator onStart={() => {}} />);
+
+      await pick('itg');
+
+      expect(screen.getByLabelText('Easy %')).toHaveValue(40);
+      expect(screen.getByLabelText('Medium %')).toHaveValue(40);
+      expect(screen.getByLabelText('Hard %')).toHaveValue(20);
+    });
+
+    it('counts the easy to hard chip as a hand edit', async () => {
+      render(<MockTestCreator onStart={() => {}} />);
+      await userEvent.click(
+        screen.getByRole('button', { name: '+ Order Easy to Hard' }),
+      );
+
+      await userEvent.click(
+        screen.getByRole('button', { name: 'Reset to defaults' }),
+      );
+
+      expect(
+        screen.getByText('Reset the prompt options and lose your changes?'),
+      ).toBeVisible();
     });
 
     it('fills the test settings from a preset in step 2 without a visit to step 1', async () => {

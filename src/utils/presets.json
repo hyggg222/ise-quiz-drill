@@ -46,20 +46,20 @@
       "id": "itg",
       "name": "ITG Final (Java)",
       "prompt": {
-        "questionCount": 20,
+        "questionCount": 10,
         "difficulty": "custom",
         "mix": {
-          "easy": 30,
-          "medium": 50,
+          "easy": 40,
+          "medium": 40,
           "hard": 20
         },
         "types": ["mcq"],
         "topics": "Cover all Java topics listed in the provided documentation (slides, notes, etc)",
-        "notes": "Write everything in English. Every question gives a Java code snippet and asks for the exact result: the printed output, the final value, or the exact compile-time or runtime error. Every question has exactly 5 options (a to e) and exactly one correct option. Each wrong option must be the result a student would get by making one specific mistake. Set codeSnippet and codeLanguage (java) on every question. The snippets must be longer and trickier for medium and hard questions. Test strict, exact language rules: evaluation order, type conversion and promotion, overload and override resolution, string and number formatting, exception behaviour. The result must be fully deterministic and verifiable by tracing the code, with exactly one correct result. Focus on tricky edge cases, subtle traps and common student misunderstandings, but the trap must come from the language rules, never from vague wording."
+        "notes": "Write everything in English. Every question gives a Java code snippet and asks for the exact result: the printed output, the final value, or the exact compile-time or runtime error. Every question has exactly 5 options (a to e) and exactly one correct option. Each wrong option must be the result a student would get by making one specific mistake. Set codeSnippet and codeLanguage (java) on every question. The snippets must be longer and trickier for medium and hard questions. Test strict, exact language rules: evaluation order, type conversion and promotion, overload and override resolution, string and number formatting, exception behaviour. The result must be fully deterministic and verifiable by tracing the code, with exactly one correct result. Focus on tricky edge cases, subtle traps and common student misunderstandings, but the trap must come from the language rules, never from vague wording. When the questions have more than one difficulty, order them from easiest to hardest: all easy questions first, then medium, then hard, so the difficulty tag never goes down from the first question to the last."
       },
       "config": {
         "title": "Java MCQ",
-        "timeLimitMinutes": 60,
+        "timeLimitMinutes": 30,
         "templateMode": "single-page",
         "antiCheat": {
           "enabled": true,

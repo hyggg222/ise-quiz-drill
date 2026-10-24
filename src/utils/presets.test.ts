@@ -12,6 +12,7 @@ import {
 import {
   defaultPromptOptions,
   defaultTestConfig,
+  easyToHardText,
   validatePromptOptions,
   validateTestConfig,
 } from './promptBuilder';
@@ -189,6 +190,23 @@ describe('built-in presets', () => {
       expect(validatePromptOptions(applyPresetPrompt(preset))).toEqual([]);
     },
   );
+
+  it('asks the ITG preset for 10 questions in 30 minutes: 40% easy, 40% medium, 20% hard', () => {
+    const itg = presets.find((p) => p.id === 'itg')!;
+    const prompt = applyPresetPrompt(itg);
+
+    expect(prompt.questionCount).toBe(10);
+    expect(prompt.difficulty).toBe('custom');
+    expect(prompt.mix).toEqual({ easy: 40, medium: 40, hard: 20 });
+    expect(applyPresetConfig(itg).timeLimitMinutes).toBe(30);
+  });
+
+  it('asks for easy to hard in the ITG notes and leaves DevOps without it', () => {
+    const notesOf = (id: string) =>
+      applyPresetPrompt(presets.find((preset) => preset.id === id)!).notes;
+    expect(notesOf('itg')).toContain(easyToHardText);
+    expect(notesOf('devops')).not.toContain(easyToHardText);
+  });
 
   it.each(presets.map((preset) => [preset.id, preset] as const))(
     '%s gives test settings the form accepts',

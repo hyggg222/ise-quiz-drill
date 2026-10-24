@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import type { QuestionType } from '../../types/quiz';
-import type { DifficultyMode, PromptOptions } from '../../utils/promptBuilder';
+import {
+  easyToHardText,
+  type DifficultyMode,
+  type PromptOptions,
+} from '../../utils/promptBuilder';
 import { fieldLabel, textInput, toNumber } from './formFields';
 
 export interface PromptOptionsFormProps {
@@ -42,6 +46,7 @@ const CHIPS = [
     label: '+ Step-by-Step Explanation',
     text: 'Provide thorough, step-by-step explanations for each correct answer.',
   },
+  { label: '+ Order Easy to Hard', text: easyToHardText },
 ];
 
 // Mouse focus on a button or checkbox is not :focus-visible, keyboard focus is
@@ -121,6 +126,11 @@ export const PromptOptionsForm: React.FC<PromptOptionsFormProps> = ({
     setMixText((prev) => ({ ...prev, [level]: text }));
     set('mix', { ...value.mix, [level]: toNumber(text, 100) });
   };
+  // The typed text while it still matches the mix, else the mix set from outside (a preset)
+  const mixShown = (level: keyof PromptOptions['mix']) =>
+    toNumber(mixText[level], 100) === value.mix[level]
+      ? mixText[level]
+      : String(value.mix[level]);
 
   return (
     <form
@@ -238,7 +248,7 @@ export const PromptOptionsForm: React.FC<PromptOptionsFormProps> = ({
                     type="number"
                     min={0}
                     max={100}
-                    value={mixText[level]}
+                    value={mixShown(level)}
                     onChange={(e) => setMix(level, e.target.value)}
                     onFocus={() => setIsPctFocused(true)}
                     onBlur={() => setIsPctFocused(false)}
