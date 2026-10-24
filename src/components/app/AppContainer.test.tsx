@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { AppContainer } from './AppContainer';
 import { loadSavedQuizzes } from '../../utils/attemptStorage';
 import { sampleQuiz } from '../../data/sampleQuiz';
+import { communityTests } from '../../data/communityTests';
 
 beforeEach(() => localStorage.clear());
 afterEach(() => {
@@ -102,6 +103,44 @@ describe('AppContainer', () => {
     expect(screen.queryByRole('navigation', { name: 'Main' })).toBeNull();
     expect(loadSavedQuizzes(localStorage).map((q) => q.title)).toEqual([
       'DevOps Basics Practice',
+    ]);
+  });
+
+  it('opens the community library from the navigation, apart from the creator', async () => {
+    render(<AppContainer />);
+    expect(
+      screen.queryByRole('region', { name: 'Community Library' }),
+    ).toBeNull();
+
+    await userEvent.click(
+      within(mainNav()).getByRole('button', { name: 'Community Library' }),
+    );
+
+    expect(
+      within(mainNav()).getByRole('button', { name: 'Community Library' }),
+    ).toHaveAttribute('aria-current', 'page');
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Community Library' }),
+    ).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(communityTests.length);
+    expect(screen.queryByText('Mock Test Creator')).toBeNull();
+  });
+
+  it('saves a started community test under its own id and runs it', async () => {
+    const [first] = communityTests;
+    render(<AppContainer />);
+    await userEvent.click(
+      within(mainNav()).getByRole('button', { name: 'Community Library' }),
+    );
+
+    const card = screen.getByRole('article', { name: first.title });
+    await userEvent.click(
+      within(card).getByRole('button', { name: 'Start Quiz' }),
+    );
+
+    expect(screen.getByRole('timer')).toBeInTheDocument();
+    expect(loadSavedQuizzes(localStorage).map((q) => q.id)).toEqual([
+      `community-${first.id}`,
     ]);
   });
 

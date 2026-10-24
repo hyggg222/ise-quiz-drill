@@ -1,11 +1,10 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MockTestCreator } from './MockTestCreator';
 import { sampleQuiz } from '../../data/sampleQuiz';
 import { presets } from '../../utils/presets';
-import { buildReadyTest } from '../../utils/readyTests';
 
 const promptBox = () =>
   screen.getByRole('region', { name: 'Compiled AI System Prompt' });
@@ -33,40 +32,18 @@ const paste = (text: string) =>
     target: { value: text },
   });
 
+afterEach(() => vi.unstubAllGlobals());
+
 describe('MockTestCreator', () => {
-  it('starts a ready test from a card above the creator', async () => {
-    const onStart = vi.fn();
-    const ready = buildReadyTest('devops', {
-      title: 'DevOps',
-      questions: sampleQuiz.questions,
-    });
-    render(<MockTestCreator onStart={onStart} readyTests={[ready]} />);
-
-    const cards = screen.getByRole('region', { name: 'Ready tests' });
-    expect(
-      cards.compareDocumentPosition(
-        screen.getByRole('button', { name: 'Write new questions with AI' }),
-      ) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(
-      screen.getByText('Or make your own: where do your questions come from?'),
-    ).toBeInTheDocument();
-
-    await userEvent.click(
-      screen.getByRole('button', { name: 'Start test: DevOps Quiz' }),
-    );
-    expect(onStart).toHaveBeenCalledWith(ready.quiz);
-  });
-
-  it('keeps the plain question when there is no ready test', () => {
-    render(<MockTestCreator onStart={() => {}} readyTests={[]} />);
+  it('leaves the community library to its own view', () => {
+    const fetch = vi.fn();
+    vi.stubGlobal('fetch', fetch);
+    render(<MockTestCreator onStart={() => {}} />);
 
     expect(
-      screen.queryByRole('region', { name: 'Ready tests' }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByText('Where do your questions come from?'),
-    ).toBeInTheDocument();
+      screen.queryByRole('region', { name: 'Community Library' }),
+    ).toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it('opens on step 1 with the prompt options and no title or settings', () => {

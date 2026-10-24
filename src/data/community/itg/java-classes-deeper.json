@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792847596026",
+  "title": "Java Slide 8",
+  "courseCode": "ITP",
+  "description": "Practice test covering object-oriented programming concepts including access modifiers, constructors, the 'this' reference, enums, statics, finals, composition, and BigDecimal precision.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Review the following code. What is the exact result of attempting to compile and run this program?",
+      "codeSnippet": "public class Test {\n    private static int staticCount;\n    private int instanceCount;\n    \n    public static void main(String[] args) {\n        Test t = new Test();\n        System.out.print(t.staticCount + \" \" + t.instanceCount);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"0 0\""
+        },
+        {
+          "id": "b",
+          "text": "\"null null\""
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: uninitialized variables might not have been initialized"
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: Test does not define a no-argument constructor"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error: NullPointerException"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "If no constructors are defined, the compiler supplies a default no-argument constructor. Uninitialized static and instance variables of type int are automatically assigned the default value of 0."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Examine the constructor logic in the Time class. What is the exact result of compiling and running this code?",
+      "codeSnippet": "public class Time {\n    private int hour, minute;\n    \n    public Time() {\n        System.out.print(\"Init \");\n        this(12, 0);\n    }\n    \n    public Time(int h, int m) {\n        this.hour = h;\n        this.minute = m;\n        System.out.print(\"Time set\");\n    }\n    \n    public static void main(String[] args) {\n        new Time();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"Init Time set\""
+        },
+        {
+          "id": "b",
+          "text": "\"Time set Init\""
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: call to this must be first statement in constructor"
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: this(...) cannot be used to call another constructor"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error: StackOverflowError"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "When a constructor uses this(...) to call another constructor, it must be the absolute first statement in the constructor body. Placing a print statement before it causes a compilation error."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Analyze the instantiation of the enum type. What is the exact result when this code is compiled and run?",
+      "codeSnippet": "enum Book {\n    JHTP(\"Java How to Program\");\n    \n    private final String title;\n    \n    Book(String title) {\n        this.title = title;\n    }\n    \n    public String getTitle() { return title; }\n}\n\npublic class Test {\n    public static void main(String[] args) {\n        Book b = new Book(\"C How to Program\");\n        System.out.print(b.getTitle());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"C How to Program\""
+        },
+        {
+          "id": "b",
+          "text": "\"Java How to Program\""
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: enum cannot declare a constructor"
+        },
+        {
+          "id": "d",
+          "text": "Runtime error: IllegalArgumentException"
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: enum types cannot be instantiated"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Enum constants are implicitly final and static. Attempting to create a new instance of an enum type using the 'new' keyword is strictly prohibited and results in a compilation error."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Observe how the static method interacts with the class members. What is the precise result?",
+      "codeSnippet": "public class Employee {\n    private static int count = 0;\n    private String name;\n    \n    public Employee(String name) {\n        this.name = name;\n        count++;\n    }\n    \n    public static int getCount() {\n        return this.count;\n    }\n    \n    public static void main(String[] args) {\n        Employee e = new Employee(\"Bob\");\n        System.out.print(Employee.getCount());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"1\""
+        },
+        {
+          "id": "b",
+          "text": "\"0\""
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: static method cannot access a private variable"
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: non-static variable this cannot be referenced from a static context"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error: NullPointerException"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Static methods cannot utilize the 'this' reference because 'this' must refer to a specific instantiated object, and static methods can be called when no objects exist in memory."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Evaluate the overloaded constructor initialization and variable shadowing. What will this program output?",
+      "codeSnippet": "public class SimpleTime {\n    private int hour = 1;\n    \n    public SimpleTime(int hour) {\n        hour = hour;\n    }\n    \n    public int getHour() {\n        return this.hour;\n    }\n    \n    public static void main(String[] args) {\n        SimpleTime t1 = new SimpleTime(5);\n        System.out.print(t1.getHour());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"5\""
+        },
+        {
+          "id": "b",
+          "text": "\"1\""
+        },
+        {
+          "id": "c",
+          "text": "\"0\""
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: variable hour is already defined"
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: SimpleTime() no-argument constructor is undefined"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "The statement 'hour = hour' assigns the local parameter to itself (a no-operation). The instance variable 'this.hour' is shadowed and remains untouched at its initial value of 1."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Review the initialization paths for the final instance variable. What happens when this code is compiled?",
+      "codeSnippet": "public class Config {\n    private final int MAX_USERS;\n    \n    public Config() {\n        // default initialization\n    }\n    \n    public Config(int max) {\n        this.MAX_USERS = max;\n    }\n    \n    public static void main(String[] args) {\n        Config c = new Config(10);\n        System.out.print(\"Success\");\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compile-time error: variable MAX_USERS might not have been initialized"
+        },
+        {
+          "id": "b",
+          "text": "\"Success\""
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: final variable MAX_USERS cannot be assigned in a constructor"
+        },
+        {
+          "id": "d",
+          "text": "Runtime error: IllegalStateException"
+        },
+        {
+          "id": "e",
+          "text": "\"0\""
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "A final instance variable must be initialized directly at declaration or inside every single constructor. The no-argument constructor fails to initialize MAX_USERS, causing a compilation error."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Examine the following code utilizing the BigDecimal API for precision arithmetic. What is the result?",
+      "codeSnippet": "import java.math.BigDecimal;\n\npublic class MathTest {\n    public static void main(String[] args) {\n        BigDecimal a = BigDecimal.valueOf(1);\n        BigDecimal b = BigDecimal.valueOf(3);\n        try {\n            BigDecimal c = a.divide(b);\n            System.out.print(c);\n        } catch (ArithmeticException e) {\n            System.out.print(\"Math Error\");\n        } catch (Exception e) {\n            System.out.print(\"General Error\");\n        }\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"0.3333333333333333\""
+        },
+        {
+          "id": "b",
+          "text": "\"0.33\""
+        },
+        {
+          "id": "c",
+          "text": "\"Math Error\""
+        },
+        {
+          "id": "d",
+          "text": "\"General Error\""
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: unhandled exception type ArithmeticException"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "BigDecimal defaults to exact calculations. Dividing 1 by 3 produces a non-terminating decimal. Without specifying a MathContext or rounding mode, the divide method throws an ArithmeticException."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Analyze this implementation of object composition. What is the exact printed output?",
+      "codeSnippet": "class Date {\n    private int month, day;\n    public Date(int m, int d) { this.month = m; this.day = d; }\n    public String toString() { return month + \"/\" + day; }\n}\n\npublic class Employee {\n    private Date hireDate;\n    \n    public Employee(Date hireDate) {\n        this.hireDate = hireDate;\n    }\n    \n    public static void main(String[] args) {\n        Date d1 = new Date(3, 12);\n        Employee e = new Employee(d1);\n        d1 = new Date(5, 20);\n        System.out.print(e.hireDate.toString());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"5/20\""
+        },
+        {
+          "id": "b",
+          "text": "Compile-time error: hireDate has private access in Employee"
+        },
+        {
+          "id": "c",
+          "text": "Runtime error: NullPointerException"
+        },
+        {
+          "id": "d",
+          "text": "\"3/12\""
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: Date class must be public"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "The Employee object holds a reference to the original Date object (3/12). Reassigning the local reference variable d1 to point to a new Date object (5/20) does not alter the original object stored within the Employee."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "Evaluate the interaction between String immutability and a shared static reference. What is the final printed output?",
+      "codeSnippet": "public class Logger {\n    private static String log = \"Start\";\n    \n    public void appendLog(String msg) {\n        log.concat(msg);\n    }\n    \n    public void updateLog(String msg) {\n        log += msg;\n    }\n    \n    public static void main(String[] args) {\n        Logger l1 = new Logger();\n        Logger l2 = new Logger();\n        \n        l1.appendLog(\"-Init\");\n        l2.updateLog(\"-Run\");\n        \n        System.out.print(Logger.log);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"Start-Init-Run\""
+        },
+        {
+          "id": "b",
+          "text": "\"Start-Run\""
+        },
+        {
+          "id": "c",
+          "text": "\"Start\""
+        },
+        {
+          "id": "d",
+          "text": "\"Start-Init\""
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: static variable log cannot be updated from non-static method"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Strings are immutable. log.concat(msg) creates a new String but does not reassign it to the 'log' reference. The += operator creates a new concatenated string and safely reassigns the shared static variable 'log', resulting in 'Start-Run'."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "Determine the exact control flow resulting from chained constructors and exception handling. What is the output?",
+      "codeSnippet": "public class Time2 {\n    private int hour, minute;\n    \n    public Time2() {\n        this(25, 0);\n        System.out.print(\"A\");\n    }\n    \n    public Time2(int hour, int minute) {\n        if (hour >= 24) {\n            throw new IllegalArgumentException(\"Bad hour\");\n        }\n        this.hour = hour;\n        this.minute = minute;\n        System.out.print(\"B\");\n    }\n    \n    public static void main(String[] args) {\n        try {\n            Time2 t = new Time2();\n            System.out.print(\"C\");\n        } catch (IllegalArgumentException e) {\n            System.out.print(\"D\");\n        }\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"ABD\""
+        },
+        {
+          "id": "b",
+          "text": "\"AD\""
+        },
+        {
+          "id": "c",
+          "text": "\"ABCD\""
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: this() must be the only statement in a constructor"
+        },
+        {
+          "id": "e",
+          "text": "\"D\""
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "The main method calls the no-arg constructor, which immediately delegates to the two-arg constructor via this(). Since 25 >= 24, an IllegalArgumentException is thrown, immediately terminating both constructors before \"B\" and \"A\" can print. Control skips \"C\" and flows straight to the catch block, printing \"D\"."
+    }
+  ]
+}

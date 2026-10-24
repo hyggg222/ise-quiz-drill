@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Library, Wrench } from 'lucide-react';
+import { Library, Users, Wrench } from 'lucide-react';
 import type { QuizAttemptRecord, QuizConfig } from '../../types/quiz';
 import { quizStarted, track } from '../../utils/analytics';
 import { loadSavedQuizzes, saveQuiz } from '../../utils/attemptStorage';
 import { browserStorage, safely } from '../../utils/browserStorage';
 import { AppearanceSettings, type Theme } from './AppearanceSettings';
+import { CommunityLibrary } from '../community/CommunityLibrary';
 import { MockTestCreator } from '../creator/MockTestCreator';
 import { QuizHistory } from '../history/QuizHistory';
 import { QuizSimulator } from '../quiz/QuizSimulator';
 import { ResultsReview } from '../quiz/ResultsReview';
 
-type ViewMode = 'simulator' | 'creator' | 'history';
+type ViewMode = 'simulator' | 'creator' | 'history' | 'community';
 const THEME_STORAGE_KEY = 'quiz-drill-theme';
 
 const loadTheme = (): Theme => {
@@ -62,8 +63,8 @@ export const AppContainer: React.FC = () => {
     setViewMode('simulator');
   };
 
-  // A quiz started from the creator is kept in the library
-  const handleStartFromCreator = (quiz: QuizConfig) => {
+  // Quizzes started here are kept in the Saved library
+  const handleStartAndSave = (quiz: QuizConfig) => {
     if (storage) safely(() => saveQuiz(storage, quiz));
     handleStartQuiz(quiz);
   };
@@ -142,6 +143,15 @@ export const AppContainer: React.FC = () => {
                 </span>
               )}
             </button>
+            <button
+              type="button"
+              aria-current={viewMode === 'community' ? 'page' : undefined}
+              onClick={() => showView('community')}
+              className={navButton(viewMode === 'community')}
+            >
+              <Users aria-hidden="true" className="w-3.5 h-3.5" /> Community
+              Library
+            </button>
           </div>
           <AppearanceSettings theme={theme} onChange={setTheme} darkHeader />
         </div>
@@ -149,7 +159,10 @@ export const AppContainer: React.FC = () => {
 
       <main className="flex-1 py-8 px-4">
         {viewMode === 'creator' && (
-          <MockTestCreator onStart={handleStartFromCreator} />
+          <MockTestCreator onStart={handleStartAndSave} />
+        )}
+        {viewMode === 'community' && (
+          <CommunityLibrary onStart={handleStartAndSave} />
         )}
         {viewMode === 'history' && (
           <QuizHistory

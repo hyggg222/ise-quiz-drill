@@ -202,17 +202,16 @@ test('keeps the quiz visible when answering a lower question in scroll mode', as
   ).toBeInViewport();
 });
 
-test('starts a built-in ready test from its card', async ({ page }) => {
+test('lists the community tests and starts one', async ({ page }) => {
   await page.goto('/');
-  const cards = page.getByRole('region', { name: 'Ready tests' });
-  await expect(cards.getByRole('article')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Community Library' }).click();
 
-  await cards.getByRole('button', { name: 'Start test: DevOps Quiz' }).click();
+  const card = page
+    .getByRole('region', { name: 'Community Library' })
+    .getByRole('article')
+    .first();
+  await expect(card).toBeVisible();
+  await card.getByRole('button', { name: 'Start Quiz' }).click();
 
-  // The DevOps preset turns on proctoring, including fullscreen
-  await expect(
-    page.getByRole('heading', { level: 1, name: 'DevOps Quiz' }),
-  ).toBeVisible();
   await expect(page.getByRole('timer')).toContainText('remaining');
-  await expect(page.getByText('Proctoring On')).toBeVisible();
 });

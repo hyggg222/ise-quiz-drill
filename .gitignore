@@ -41,6 +41,11 @@ cdk/cdk-outputs.json
 AGENTS.md
 CLAUDE.md
 
+# agent workflow notes (specs, grill ledgers, glossary)
+docs/spec/
+docs/grill/
+GLOSSARY.md
+
 # test output
 test-results/
 playwright-report/

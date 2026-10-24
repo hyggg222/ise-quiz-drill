@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792796052885",
+  "title": "Java Slide 4",
+  "courseCode": "ITP",
+  "description": "Practice exam covering Java selection statements (if, if...else, conditional operator), while iteration, counter- and sentinel-controlled loops, type conversion and promotion, compound assignment operators, prefix/postfix increment and decrement operators, and primitive type defaults.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int c = 5;\nSystem.out.printf(\"%d \", c++);\nSystem.out.printf(\"%d \", c);\nSystem.out.printf(\"%d\", ++c);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "6 6 7"
+        },
+        {
+          "id": "b",
+          "text": "5 6 6"
+        },
+        {
+          "id": "c",
+          "text": "5 6 7"
+        },
+        {
+          "id": "d",
+          "text": "6 6 6"
+        },
+        {
+          "id": "e",
+          "text": "5 5 6"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "The postfix operator c++ uses the current value of c (5) in the first printf before incrementing c to 6, whereas the prefix operator ++c increments c from 6 to 7 before using the new value in the third printf."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int total = 7;\nint count = 4;\nint average = total / count;\nint remainder = total % count;\nSystem.out.printf(\"%d %d\", average, remainder);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "2 3"
+        },
+        {
+          "id": "b",
+          "text": "1.75 3"
+        },
+        {
+          "id": "c",
+          "text": "3 1"
+        },
+        {
+          "id": "d",
+          "text": "1 4"
+        },
+        {
+          "id": "e",
+          "text": "1 3"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Dividing two int values (7 / 4) performs integer division, which truncates the fractional part .75 to yield 1 rather than rounding to 2, while 7 % 4 evaluates to the remainder 3."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int product = 3;\nwhile (product <= 100) {\n    product = 3 * product;\n}\nSystem.out.println(product);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "243"
+        },
+        {
+          "id": "b",
+          "text": "81"
+        },
+        {
+          "id": "c",
+          "text": "729"
+        },
+        {
+          "id": "d",
+          "text": "100"
+        },
+        {
+          "id": "e",
+          "text": "3"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Starting from 3, each iteration of the while loop multiplies product by 3 to produce 9, 27, 81, and finally 243, at which point product <= 100 becomes false and the loop terminates."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int c = 3;\nint g = 12;\nc += 7;\ng %= 9;\nSystem.out.printf(\"%d %d\", c, g);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "7 9"
+        },
+        {
+          "id": "b",
+          "text": "10 1"
+        },
+        {
+          "id": "c",
+          "text": "21 3"
+        },
+        {
+          "id": "d",
+          "text": "10 3"
+        },
+        {
+          "id": "e",
+          "text": "3 12"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "The compound assignment c += 7 is equivalent to c = c + 7 (assigning 10 to c), and g %= 9 is equivalent to g = g % 9 (assigning the remainder 3 to g)."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int total = 257;\nint gradeCounter = 3;\ndouble avg1 = (double) total / gradeCounter;\ndouble avg2 = (double) (total / gradeCounter);\nif (gradeCounter != 0) {\n    System.out.printf(\"%.2f %.2f\", avg1, avg2);\n} else {\n    System.out.print(\"No grades\");\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "85.67 85.67"
+        },
+        {
+          "id": "b",
+          "text": "85.67 85.00"
+        },
+        {
+          "id": "c",
+          "text": "85.00 85.00"
+        },
+        {
+          "id": "d",
+          "text": "85.66 85.00"
+        },
+        {
+          "id": "e",
+          "text": "85.67 85"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "In avg1, the unary cast operator (double) has higher precedence than /, so total is converted to 257.0 and gradeCounter is promoted to 3.0, yielding 85.67 when formatted with %.2f. In avg2, parentheses force integer division (257 / 3 = 85) before the cast to double, printing 85.00."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int grade = 55;\nint bonus = 0;\n\nif (grade >= 60);\n    bonus += 10;\n\nif (grade >= 60)\n    if (grade >= 80)\n        bonus += 20;\nelse\n    bonus += 5;\n\nSystem.out.println(bonus);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "5"
+        },
+        {
+          "id": "b",
+          "text": "15"
+        },
+        {
+          "id": "c",
+          "text": "0"
+        },
+        {
+          "id": "d",
+          "text": "10"
+        },
+        {
+          "id": "e",
+          "text": "25"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "The semicolon immediately after the first if (grade >= 60); creates an empty statement as the if body, so bonus += 10; executes unconditionally and sets bonus to 10. In the second if, the omitted braces cause the dangling else to attach to the inner if (grade >= 80), so when the outer condition grade >= 60 is false, the entire nested if...else is skipped."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the main method of the Student class executes?",
+      "codeSnippet": "public class Student {\n    private String name;\n    private double average;\n\n    public Student(String name, double average) {\n        this.name = name;\n        if (average > 0.0) {\n            if (average <= 100.0) {\n                this.average = average;\n            }\n        }\n    }\n\n    public void setAverage(double average) {\n        if (average > 0.0) {\n            if (average <= 100.0) {\n                this.average = average;\n            }\n        }\n    }\n\n    public String getLetterGrade() {\n        if (average >= 90.0) return \"A\";\n        else if (average >= 80.0) return \"B\";\n        else if (average >= 70.0) return \"C\";\n        else if (average >= 60.0) return \"D\";\n        else return \"F\";\n    }\n\n    public static void main(String[] args) {\n        Student s = new Student(\"Alex\", 0.0);\n        s.setAverage(85.0);\n        s.setAverage(105.0);\n        Student s2 = new Student(\"Sam\", -10.0);\n        System.out.printf(\"%.1f %s %.1f %s\",\n            s.average, s.getLetterGrade(), s2.average, s2.getLetterGrade());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "85.0 B 0.0 F"
+        },
+        {
+          "id": "b",
+          "text": "0.0 F 0.0 F"
+        },
+        {
+          "id": "c",
+          "text": "105.0 A -10.0 F"
+        },
+        {
+          "id": "d",
+          "text": "85.0 B -10.0 F"
+        },
+        {
+          "id": "e",
+          "text": "105.0 A 0.0 F"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Instance variable average defaults to 0.0. Calling s.setAverage(85.0) updates s.average to 85.0, and the subsequent invalid call s.setAverage(105.0) fails the average <= 100.0 check, leaving s.average unchanged at 85.0 (grade B). For s2, -10.0 fails average > 0.0 in the constructor, keeping the default 0.0 (grade F)."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int passes = 0;\nint failures = 0;\nint studentCounter = 1;\n\nwhile (studentCounter <= 5) {\n    int result = (studentCounter % 2 != 0) ? 1 : 2;\n    if (result == 1) {\n        ++passes;\n    } else {\n        failures++;\n    }\n    studentCounter += 2;\n}\n\nString status = passes > 2 ? \"Bonus\" : \"NoBonus\";\nSystem.out.printf(\"%d %d %d %s\", passes, failures, studentCounter, status);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "3 2 6 Bonus"
+        },
+        {
+          "id": "b",
+          "text": "2 0 5 NoBonus"
+        },
+        {
+          "id": "c",
+          "text": "3 0 5 Bonus"
+        },
+        {
+          "id": "d",
+          "text": "2 1 7 NoBonus"
+        },
+        {
+          "id": "e",
+          "text": "3 0 7 Bonus"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Because studentCounter starts at 1 and increases by 2 each iteration (taking values 1, 3, and 5), studentCounter % 2 != 0 is always true, incrementing passes 3 times and leaving failures at 0. On the third iteration, studentCounter += 2 updates studentCounter from 5 to 7 before the loop terminates, and passes > 2 evaluates to \"Bonus\"."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int a = 3;\nint b = 8;\nint c = 2;\n\nc += (a++ + 4 < --b) ? a : b + a / 2;\ndouble avg = (c >= 10) ? c / 4 : (double) c / 4;\n\nSystem.out.printf(\"%d %d %d %.2f\", a, b, c, avg);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "4 7 11 2.75"
+        },
+        {
+          "id": "b",
+          "text": "4 7 10 2.00"
+        },
+        {
+          "id": "c",
+          "text": "4 7 11 2.00"
+        },
+        {
+          "id": "d",
+          "text": "4 7 6 1.50"
+        },
+        {
+          "id": "e",
+          "text": "4 7 7 1.75"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "In a++ + 4 < --b, a++ yields 3 (then a becomes 4) so 3 + 4 is 7, and --b decrements b to 7 first; since 7 < 7 is false, the third operand b + a / 2 evaluates using the updated values 7 + 4 / 2 = 9, making c += 9 equal to 11. In the second conditional expression, c >= 10 is true, so c / 4 is evaluated using integer division (11 / 4 = 2) before being promoted to double (2.00)."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact printed output when the following Java code snippet executes?",
+      "codeSnippet": "int x = 24;\nint y = 3;\nint count = 0;\n\nwhile (x > y) {\n    int step;\n    if (x % 3 == 0) {\n        step = 2;\n    } else {\n        step = 3;\n    }\n    x -= y += step;\n    count++;\n}\n\nSystem.out.printf(\"%d %d %d\", x, y, count);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "9 10 3"
+        },
+        {
+          "id": "b",
+          "text": "0 11 3"
+        },
+        {
+          "id": "c",
+          "text": "11 8 2"
+        },
+        {
+          "id": "d",
+          "text": "9 9 2"
+        },
+        {
+          "id": "e",
+          "text": "1 3 4"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Compound assignment operators associate from right to left, so x -= y += step first updates y = y + step and then subtracts that new value of y from x. Tracing the three iterations yields: Iteration 1 (24 % 3 == 0 -> step = 2, y = 5, x = 19, count = 1); Iteration 2 (19 % 3 != 0 -> step = 3, y = 8, x = 11, count = 2); Iteration 3 (11 % 3 != 0 -> step = 3, y = 11, x = 0, count = 3), after which 0 > 11 is false."
+    }
+  ]
+}

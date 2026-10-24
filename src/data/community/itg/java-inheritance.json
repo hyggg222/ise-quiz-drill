@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792847596026",
+  "title": "Java Slide 9",
+  "courseCode": "ITP",
+  "description": "Evaluates understanding of inheritance hierarchies, protected/private access modifiers, subclass constructors, Object class methods, and exact execution rules for overridden methods.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class A {\n    A() { System.out.print(\"A\"); }\n}\nclass B extends A {\n    B() { System.out.print(\"B\"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new B();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"A\""
+        },
+        {
+          "id": "b",
+          "text": "\"B\""
+        },
+        {
+          "id": "c",
+          "text": "\"AB\""
+        },
+        {
+          "id": "d",
+          "text": "\"BA\""
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "If a subclass omits an explicit superclass constructor call, Java implicitly calls the superclass's no-argument constructor before executing the subclass constructor body, outputting 'A' then 'B'."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Parent {\n    public void print() { System.out.print(\"P\"); }\n}\nclass Child extends Parent {\n    @Override\n    public void print(int x) { System.out.print(\"C\" + x); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new Child().print(1);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"C1\""
+        },
+        {
+          "id": "b",
+          "text": "\"P\""
+        },
+        {
+          "id": "c",
+          "text": "\"PC1\""
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "The @Override annotation instructs the compiler to verify that the method correctly overrides a superclass method. Because the parameter signatures differ, it fails to override and causes a compile-time error."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Employee {\n    @Override\n    public String toString() { return \"Emp\"; }\n}\nclass Manager extends Employee { }\npublic class Test {\n    public static void main(String[] args) {\n        System.out.print(new Manager());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"Manager\""
+        },
+        {
+          "id": "b",
+          "text": "\"Emp\""
+        },
+        {
+          "id": "c",
+          "text": "\"Manager@hashcode\""
+        },
+        {
+          "id": "d",
+          "text": "\"Emp@hashcode\""
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "The Manager subclass inherits the overridden toString method from Employee. Printing an object implicitly invokes its toString method, outputting 'Emp'."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Base {\n    private int id = 10;\n}\nclass Derived extends Base {\n    public void show() { System.out.print(id); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new Derived().show();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"10\""
+        },
+        {
+          "id": "b",
+          "text": "\"0\""
+        },
+        {
+          "id": "c",
+          "text": "\"null\""
+        },
+        {
+          "id": "d",
+          "text": "Runtime error"
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Private superclass members are hidden from subclasses. Direct access to a superclass's private variables from a subclass causes a compilation error."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class X {\n    X(int i) { System.out.print(\"X\" + i); }\n}\nclass Y extends X {\n    Y() {\n        super(5);\n        System.out.print(\"Y\");\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new Y();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"X5Y\""
+        },
+        {
+          "id": "b",
+          "text": "\"YX5\""
+        },
+        {
+          "id": "c",
+          "text": "\"Y5\""
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error"
+        },
+        {
+          "id": "e",
+          "text": "Runtime error"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "The subclass constructor explicitly invokes the superclass constructor X(int) by calling super(5) as its very first statement. The superclass finishes its initialization first, outputting 'X5', followed by the subclass outputting 'Y'."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Machine {\n    public void start(double power) { System.out.print(\"M\" + power); }\n}\nclass Generator extends Machine {\n    public void start(int power) { System.out.print(\"G\" + power); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        Machine m = new Generator();\n        m.start(10);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"G10\""
+        },
+        {
+          "id": "b",
+          "text": "\"G10.0\""
+        },
+        {
+          "id": "c",
+          "text": "\"M10.0\""
+        },
+        {
+          "id": "d",
+          "text": "\"M10\""
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "Generator overloads rather than overrides the start method because the parameter type differs (int vs double). Since m is a Machine reference, the compiler resolves to start(double), which executes at runtime since it was never overridden in the subclass."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Item {\n    int val;\n    Item(int v) { val = v; }\n}\npublic class Test {\n    public static void main(String[] args) {\n        Item[] arr1 = { new Item(1) };\n        Item[] arr2 = arr1.clone();\n        arr2[0].val = 2;\n        System.out.print(arr1[0].val);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"1\""
+        },
+        {
+          "id": "b",
+          "text": "Compile-time error"
+        },
+        {
+          "id": "c",
+          "text": "Runtime error"
+        },
+        {
+          "id": "d",
+          "text": "\"null\""
+        },
+        {
+          "id": "e",
+          "text": "\"2\""
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Arrays possess an overridden clone method that performs a shallow copy. For reference types, only memory references are copied, so both arrays point to the exact same underlying Item object, meaning a modification to one reflects in the other."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Vehicle {\n    public void start() { System.out.print(\"V\"); }\n}\nclass Car extends Vehicle {\n    @Override\n    protected void start() { System.out.print(\"C\"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        Vehicle v = new Car();\n        v.start();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"V\""
+        },
+        {
+          "id": "b",
+          "text": "Compile-time error"
+        },
+        {
+          "id": "c",
+          "text": "\"C\""
+        },
+        {
+          "id": "d",
+          "text": "Runtime error"
+        },
+        {
+          "id": "e",
+          "text": "\"VC\""
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Overridden methods cannot have a more restrictive access modifier than their superclass counterparts. Changing public to protected breaks the is-a relationship, triggering a compilation error."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Part {\n    protected int id;\n    public Part(int id) { this.id = id; }\n}\nclass Engine extends Part {\n    private int id = 5;\n    public Engine() {\n        System.out.print(this.id);\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new Engine();\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compile-time error"
+        },
+        {
+          "id": "b",
+          "text": "\"5\""
+        },
+        {
+          "id": "c",
+          "text": "\"0\""
+        },
+        {
+          "id": "d",
+          "text": "Runtime error"
+        },
+        {
+          "id": "e",
+          "text": "\"null\""
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "If a superclass does not have a default (no-argument) constructor, the compiler issues an error unless the subclass explicitly invokes an available superclass constructor. Because Engine omits a super(...) call, the compiler attempts to insert a call to a non-existent Part() constructor."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result of compiling and executing the following Java program?",
+      "codeSnippet": "class Data {\n    @Override\n    public String toString() {\n        return \"Data-\" + super.toString();\n    }\n}\nclass SubData extends Data {\n    @Override\n    public String toString() {\n        return \"Sub-\" + this.toString();\n    }\n}\npublic class Test {\n    public static void main(String[] args) {\n        System.out.print(new SubData().toString());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "\"Data-Sub-hashcode\""
+        },
+        {
+          "id": "b",
+          "text": "\"Sub-Data-hashcode\""
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error"
+        },
+        {
+          "id": "d",
+          "text": "Runtime error"
+        },
+        {
+          "id": "e",
+          "text": "\"Sub-hashcode\""
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Failure to prefix the superclass method name with the keyword 'super' when attempting to reuse an overridden method causes the subclass method to call itself repeatedly. this.toString() triggers infinite recursion, resulting in a fatal runtime error (stack overflow)."
+    }
+  ]
+}

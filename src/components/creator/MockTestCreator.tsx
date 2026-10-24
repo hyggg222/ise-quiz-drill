@@ -19,9 +19,6 @@ import {
   resetTestConfig,
 } from '../../utils/presets';
 import { parseQuizJson, type ImportSettings } from '../../utils/quizSchema';
-import type { ReadyTest } from '../../utils/readyTests';
-import { readyTests as builtInReadyTests } from '../../data/readyTests';
-import { ReadyTests } from './ReadyTests';
 import { CompiledPromptBox } from './CompiledPromptBox';
 import { JsonImporter } from './JsonImporter';
 import { PresetPicker } from './PresetPicker';
@@ -30,7 +27,6 @@ import { TestConfigForm } from './TestConfigForm';
 
 export interface MockTestCreatorProps {
   onStart: (quiz: QuizConfig) => void;
-  readyTests?: ReadyTest[];
 }
 
 const card =
@@ -46,7 +42,6 @@ const paths = [
 
 export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
   onStart,
-  readyTests = builtInReadyTests,
 }) => {
   // Options, config and JSON text live here, not in the step sections, so
   // they survive a change of step and a preset can fill them from step 1.
@@ -117,16 +112,12 @@ export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
         </div>
       </div>
 
-      <ReadyTests tests={readyTests} onStart={(test) => onStart(test.quiz)} />
-
       <div className={card}>
         <span
           id="creator-path"
           className="block text-xs font-bold uppercase tracking-wider text-gray-700"
         >
-          {readyTests.length > 0
-            ? 'Or make your own: where do your questions come from?'
-            : 'Where do your questions come from?'}
+          Or make your own: where do your questions come from?
         </span>
         <div
           role="group"
