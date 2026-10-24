@@ -18,6 +18,25 @@ const template = (imageTag = 'abc1234', alarmEmail?: string) => {
   );
 };
 
+// Works out a CloudFormation value, with every GetAtt given as the endpoint
+type Cfn = string | Cfn[] | { [fn: string]: Cfn };
+const resolve = (value: Cfn, endpoint: string): string | string[] => {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value))
+    return value.map((v) => resolve(v, endpoint) as string);
+  const [[fn, args]] = Object.entries(value) as [string, Cfn[]][];
+  if (fn === 'Fn::GetAtt') return endpoint;
+  if (fn === 'Fn::Split')
+    return (resolve(args[1], endpoint) as string).split(args[0] as string);
+  if (fn === 'Fn::Join') {
+    const parts = resolve(args[1], endpoint);
+    return (Array.isArray(parts) ? parts : [parts])
+      .flat()
+      .join(args[0] as string);
+  }
+  throw new Error(`cannot resolve ${fn}`);
+};
+
 describe('ServiceStack', () => {
   test('runs the image tag it is given from the project repository', () => {
     template('9f8e7d6').hasResourceProperties(
@@ -112,7 +131,14 @@ describe('ServiceStack', () => {
     });
   });
 
-  test('outputs the service URL', () => {
-    template().hasOutput('ServiceUrl', {});
-  });
+  // AWS gave the endpoint without a scheme, then started adding https://
+  test.each(['is-1.ecs.eu-west-1.on.aws', 'https://is-1.ecs.eu-west-1.on.aws'])(
+    'outputs one https:// for the endpoint %s',
+    (endpoint) => {
+      const output = template().toJSON().Outputs.ServiceUrl.Value;
+      expect(resolve(output, endpoint)).toBe(
+        'https://is-1.ecs.eu-west-1.on.aws',
+      );
+    },
+  );
 });

@@ -87,8 +87,11 @@ export class ServiceStack extends cdk.Stack {
     alarm.addAlarmAction(new cloudwatchActions.SnsAction(alarmTopic));
     alarm.addOkAction(new cloudwatchActions.SnsAction(alarmTopic));
 
-    new cdk.CfnOutput(this, 'ServiceUrl', {
-      value: `https://${service.attrEndpoint}`,
-    });
+    // The endpoint may come with or without https://, so drop it and add one
+    const host = cdk.Fn.join(
+      '',
+      cdk.Fn.split('https://', service.attrEndpoint),
+    );
+    new cdk.CfnOutput(this, 'ServiceUrl', { value: `https://${host}` });
   }
 }
