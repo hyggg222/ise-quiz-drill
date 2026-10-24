@@ -61,3 +61,11 @@ Brightspace Quiz Simulator supports 2 presentation templates:
 - Summary header: Total score (e.g., "8.5 / 10"), time taken, status.
 - Question review: Student answer vs correct answer, points per question ("1/1 point"), and explanation.
 - Scoring: Every question type is all or nothing, so a question earns full points only when the whole answer is correct. Short answers and blanks ignore case and surrounding spaces; a short answer may list several accepted answers.
+
+## 3. Community library
+
+- The Community Library button in the top bar opens a page of its own, next to Test Creator and Saved Library. It lists the tests in `src/data/community/<preset id>/`, sorted by title, with the Saved library card: the course code, the title, the question and minute counts, Start Quiz and Export. There is no Delete.
+- Each file is quiz JSON in the importer format (what the AI returns). It goes through the importer with the time, layout and proctoring of the preset its folder names (for example `itg/` gives the ITG Java settings: one scrolling page, proctored). It keeps its own title. The file name is the test id; an id inside the file is ignored. A file the importer refuses fails the build and the tests.
+- Start Quiz begins the quiz at once. The test is also copied to the Saved library under the id `community-<id>`, so it works offline.
+- An empty folder shows "No tests published yet".
+- To add a test, put its JSON file in the folder of its preset, such as `src/data/community/itg/`, and open a pull request; it ships with the next deploy.
