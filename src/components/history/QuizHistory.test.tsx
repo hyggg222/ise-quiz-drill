@@ -171,3 +171,78 @@ describe('QuizHistory', () => {
     expect(screen.getByText('No Attempt History Recorded')).toBeInTheDocument();
   });
 });
+
+// Data written by an earlier version of the app. Keys and shape are
+// typed out here on purpose: they must never change.
+describe('QuizHistory with data saved by an earlier version', () => {
+  const builtIn = {
+    id: 'ready-devops',
+    title: 'DevOps Quiz',
+    courseCode: 'CS4421',
+    description: 'Practice test',
+    templateMode: 'paginated',
+    timeLimitMinutes: 15,
+    questionsPerPage: 5,
+    antiCheat: {
+      enabled: true,
+      tabLock: true,
+      uiRestrictions: true,
+      fullscreenLock: true,
+    },
+    questions: [
+      {
+        id: 'q1',
+        number: 1,
+        page: 1,
+        type: 'mcq',
+        points: 1,
+        prompt: 'Pick one',
+        options: [
+          { id: 'a', text: 'One' },
+          { id: 'b', text: 'Two' },
+        ],
+        correctAnswer: 'a',
+      },
+    ],
+  };
+  const attempt = {
+    id: 'attempt-old',
+    quizId: 'ready-devops',
+    quizTitle: 'DevOps Quiz',
+    courseCode: 'CS4421',
+    timestamp: '2026-10-12T09:30:00.000Z',
+    earnedScore: 1,
+    totalPoints: 1,
+    percentage: 100,
+    timeTakenSeconds: 60,
+    eventLog: [],
+    answers: { q1: 'a' },
+    quizSnapshot: builtIn,
+  };
+
+  it('still lists a saved test with an old id and starts it', async () => {
+    localStorage.setItem('quiz-drill:v1:quizzes', JSON.stringify([builtIn]));
+    const h = handlers();
+    render(<QuizHistory {...h} />);
+
+    const card = screen.getByRole('article', { name: 'DevOps Quiz' });
+    await userEvent.click(
+      within(card).getByRole('button', { name: 'Start Quiz' }),
+    );
+
+    expect(h.onStart).toHaveBeenCalledWith(builtIn);
+  });
+
+  it('still shows its attempts and opens the review', async () => {
+    localStorage.setItem('quiz-drill:v1:history', JSON.stringify([attempt]));
+    const h = handlers();
+    render(<QuizHistory {...h} />);
+    await userEvent.click(screen.getByRole('tab', { name: /Attempt History/ }));
+
+    const row = screen.getAllByRole('listitem')[0];
+    expect(row).toHaveTextContent('DevOps Quiz');
+    await userEvent.click(within(row).getByRole('button', { name: 'Review' }));
+
+    expect(h.onReview).toHaveBeenCalledWith(attempt);
+  });
+});

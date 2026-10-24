@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792796052885",
+  "title": "Java Slide 2",
+  "courseCode": "ITP",
+  "description": "Practice examination covering Java comments, class declarations, identifiers, standard I/O, Scanner, printf, escape sequences, arithmetic expressions, operator precedence, and decision-making statements.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java program is compiled and executed?",
+      "codeSnippet": "public class MemoryTest {\n    public static void main(String[] args) {\n        int a1 = 1_000;\n        int A1 = 2_000;\n        a1 = A1;\n        A1 = 500;\n        System.out.printf(\"%d %d\", a1, A1);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "1000 2000"
+        },
+        {
+          "id": "b",
+          "text": "2000 500"
+        },
+        {
+          "id": "c",
+          "text": "500 500"
+        },
+        {
+          "id": "d",
+          "text": "1000 500"
+        },
+        {
+          "id": "e",
+          "text": "2000 2000"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Java is case-sensitive so a1 and A1 are distinct variables, underscores in numeric literals are ignored, and destructive assignment overwrites a1 with 2000 before A1 is overwritten with 500."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java program is compiled and executed?",
+      "codeSnippet": "public class EscapeTest {\n    public static void main(String[] args) {\n        System.out.print(\"Java \");\n        /* System.out.print(\"is \"); */\n        System.out.println(\"\\\"v11\\\"\\\\2\");\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Java is \"v11\"\\2"
+        },
+        {
+          "id": "b",
+          "text": "Java \\\"v11\\\"\\\\2"
+        },
+        {
+          "id": "c",
+          "text": "Java \"v11\"\\\\2"
+        },
+        {
+          "id": "d",
+          "text": "Java \"v11\"\\2"
+        },
+        {
+          "id": "e",
+          "text": "Java 'v11'\\2"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "System.out.print keeps the cursor on the same line, the traditional comment /* ... */ is ignored by the compiler, \\\" prints a double quote, and \\\\ prints a single backslash."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java program is compiled and executed?",
+      "codeSnippet": "public class DivisionTest {\n    public static void main(String[] args) {\n        int total = 19;\n        int group = 5;\n        int quotient = total / group;\n        int remainder = total % group;\n        System.out.printf(\"q=%d, r=%d\", quotient, remainder);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "q=3, r=4"
+        },
+        {
+          "id": "b",
+          "text": "q=4, r=4"
+        },
+        {
+          "id": "c",
+          "text": "q=3, r=8"
+        },
+        {
+          "id": "d",
+          "text": "q=4, r=1"
+        },
+        {
+          "id": "e",
+          "text": "q=3.8, r=4"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Integer division (19 / 5) truncates the fractional part without rounding to yield 3, while the remainder operator (19 % 5) yields the leftover value 4."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "Assume the following complete source file InputTest.java is compiled with javac InputTest.java. What is the exact compile-time result?",
+      "codeSnippet": "public class InputTest {\n    public static void main(String[] args) {\n        System.out.print(\"Enter value: \");\n        Scanner sc = new Scanner(System.in);\n        int value = sc.nextInt();\n        System.out.println(value);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compile-time error: cannot find symbol class System because java.lang is not imported"
+        },
+        {
+          "id": "b",
+          "text": "Compile-time error: method main must return an int value instead of void"
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: cannot find symbol class Scanner because java.util.Scanner is not imported"
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: variable value must be declared before creating the Scanner object"
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: System.in cannot be passed as an argument to new Scanner"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "Classes in java.lang such as System are imported by default, but using Scanner without an import java.util.Scanner; declaration before the class causes a 'cannot find symbol' compilation error."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact line of text displayed when the following Java program is compiled and executed?",
+      "codeSnippet": "public class FormatTrap {\n    public static void main(String[] args) {\n        String code = \"AB\";\n        int ver = 11;\n        System.out.printf(\"Java-%s-%d\\rJDK-%s\", code, ver, code);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "JDK-AB"
+        },
+        {
+          "id": "b",
+          "text": "Java-AB-11JDK-AB"
+        },
+        {
+          "id": "c",
+          "text": "JDK-AB-11"
+        },
+        {
+          "id": "d",
+          "text": "Java-AB-11\\rJDK-AB"
+        },
+        {
+          "id": "e",
+          "text": "JDK-ABB-11"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Before \\r, printf outputs the 10-character string 'Java-AB-11'; the carriage return \\r moves the cursor to the start of the line, and 'JDK-AB' overwrites only the first 6 characters ('Java-A'), leaving 'B-11' at the end."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java program is compiled and executed?",
+      "codeSnippet": "public class PrecedenceTrace {\n    public static void main(String[] args) {\n        int a = 25;\n        int b = 4;\n        int c = 3;\n        int result = a - a / b * b + (a % (b + c)) / 2;\n        System.out.println(result);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "-1"
+        },
+        {
+          "id": "b",
+          "text": "2"
+        },
+        {
+          "id": "c",
+          "text": "5"
+        },
+        {
+          "id": "d",
+          "text": "26"
+        },
+        {
+          "id": "e",
+          "text": "3"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Innermost parentheses evaluate first (b + c = 7, then 25 % 7 = 4), multiplicative operators associate left-to-right (25 / 4 = 6, 6 * 4 = 24, and 4 / 2 = 2), and additive operators associate left-to-right (25 - 24 + 2 = 3)."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java program is compiled and executed?",
+      "codeSnippet": "public class DecisionTrap {\n    public static void main(String[] args) {\n        int x = 10;\n        int y = 20;\n        if (x > y); {\n            x = x + 15;\n        }\n        if (x < y)\n            y = y + 10;\n            x = x + 5;\n        System.out.printf(\"x=%d, y=%d\", x, y);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "x=15, y=30"
+        },
+        {
+          "id": "b",
+          "text": "x=10, y=30"
+        },
+        {
+          "id": "c",
+          "text": "x=25, y=20"
+        },
+        {
+          "id": "d",
+          "text": "x=30, y=20"
+        },
+        {
+          "id": "e",
+          "text": "x=30, y=30"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "The semicolon after if (x > y); creates an empty body so x = x + 15 always executes (making x = 25); then x < y (25 < 20) is false, which skips only the single unbraced statement y = y + 10 while x = x + 5 still executes."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Assume the user enters 23 followed by 5 at the keyboard. What is the exact printed output of the following program?",
+      "codeSnippet": "import java.util.Scanner;\n\npublic class Calculator {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        int $val_1 = input.nextInt();\n        int _val2 = input.nextInt();\n        $val_1 = $val_1 / _val2 + _val2;\n        _val2 = $val_1 % _val2;\n        System.out.printf(\"%d:%d%n\",\n            $val_1, _val2);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "9:4"
+        },
+        {
+          "id": "b",
+          "text": "9:3"
+        },
+        {
+          "id": "c",
+          "text": "2:2"
+        },
+        {
+          "id": "d",
+          "text": "10:0"
+        },
+        {
+          "id": "e",
+          "text": "9:1"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Integer division 23 / 5 truncates to 4 before adding 5, destructively assigning 9 to $val_1; the next statement uses this updated value to compute 9 % 5 = 4 for _val2."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact printed output when the following Java program is compiled and executed?",
+      "codeSnippet": "public class OperatorHierarchy {\n    public static void main(String[] args) {\n        int a = 4;\n        int b = 7;\n        int c = 2;\n        int d = a = b - c * 2;\n\n        if (a + c > b == b / a > c) {\n            a = a + 10;\n        }\n        if (d <= a != b >= a) {\n            d = d + 20;\n        }\n        System.out.printf(\"a=%d, d=%d\", a, d);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "a=3, d=23"
+        },
+        {
+          "id": "b",
+          "text": "a=13, d=23"
+        },
+        {
+          "id": "c",
+          "text": "a=3, d=3"
+        },
+        {
+          "id": "d",
+          "text": "a=13, d=3"
+        },
+        {
+          "id": "e",
+          "text": "a=14, d=24"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Right-to-left assignment sets both a and d to 3 (7 - 4); in the first if, relational '>' has higher precedence than '==', so (5 > 7) == (2 > 2) evaluates to false == false which is true (updating a to 13), and in the second if, (3 <= 13) != (7 >= 13) evaluates to true != false which is also true (updating d to 23)."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact line of text displayed when the following Java program is compiled and executed?",
+      "codeSnippet": "public class FinalChallenge {\n    public static void main(String[] args) {\n        int m = 14;\n        int n = 4;\n        int p = m % n + m / n;\n\n        if (p * n >= m)\n            p = p + n;\n        if (m - p == n); {\n            p = p * 2;\n        }\n        System.out.printf(\"p=%d, m=%d\\rp=%d\", n, m, p);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "p=18, m=14"
+        },
+        {
+          "id": "b",
+          "text": "p=9, m=14"
+        },
+        {
+          "id": "c",
+          "text": "p=18 m=14"
+        },
+        {
+          "id": "d",
+          "text": "p=10 m=14"
+        },
+        {
+          "id": "e",
+          "text": "p=4, m=14"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "Initially p = 2 + 3 = 5, the first if updates p to 9, and the semicolon after the second if forces p = p * 2 to execute unconditionally (making p = 18); printf first outputs 'p=4, m=14' (using n=4 first), and then '\\rp=18' overwrites the first 4 characters ('p=4,'), erasing the comma to leave 'p=18 m=14'."
+    }
+  ]
+}

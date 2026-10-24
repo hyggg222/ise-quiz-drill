@@ -1,12 +1,10 @@
 import React, { useRef, useState, type KeyboardEvent } from 'react';
 import {
   Clock,
-  Download,
   Eye,
   FileJson,
   HelpCircle,
   History,
-  Play,
   PlusCircle,
   Trash2,
 } from 'lucide-react';
@@ -23,6 +21,8 @@ import {
   safely,
   type KeyValueStore,
 } from '../../utils/browserStorage';
+import { EmptyState } from '../library/EmptyState';
+import { QuizCard, cardGrid } from '../library/QuizCard';
 
 export interface QuizHistoryProps {
   onStart: (quiz: QuizConfig) => void;
@@ -38,22 +38,6 @@ const formatDuration = (secs: number) => {
   const s = secs % 60;
   return `${m}m ${s}s`;
 };
-
-function exportJson(quiz: QuizConfig) {
-  const url = URL.createObjectURL(
-    new Blob([JSON.stringify(quiz, null, 2)], { type: 'application/json' }),
-  );
-  const link = document.createElement('a');
-  link.href = url;
-  const safeTitle = (quiz.title || 'quiz')
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '_');
-  link.download = `${safeTitle}.json`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
 
 const tabClass = (active: boolean) =>
   `px-4 py-2 rounded-lg font-bold text-xs transition-colors flex items-center gap-2 cursor-pointer border border-[#006fbf] ${
@@ -192,17 +176,11 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
       >
         {subTab === 'quizzes' &&
           (savedQuizzes.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center space-y-4">
-              <div className="w-16 h-16 bg-[#006fbf] text-white rounded-full flex items-center justify-center mx-auto">
-                <FileJson aria-hidden="true" className="w-8 h-8" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">
-                No Saved Quizzes Found
-              </h2>
-              <p className="text-sm text-gray-500 max-w-md mx-auto">
-                You haven&apos;t saved any quizzes yet. Use the Test Creator to
-                generate AI prompts or import JSON mock tests.
-              </p>
+            <EmptyState
+              icon={<FileJson aria-hidden="true" className="w-8 h-8" />}
+              title="No Saved Quizzes Found"
+              text="You haven't saved any quizzes yet. Use the Test Creator to generate AI prompts or import JSON mock tests."
+            >
               <button
                 type="button"
                 onClick={onCreate}
@@ -211,97 +189,28 @@ export const QuizHistory: React.FC<QuizHistoryProps> = ({
                 <PlusCircle aria-hidden="true" className="w-4 h-4" /> Create
                 Your First Test
               </button>
-            </div>
+            </EmptyState>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className={cardGrid}>
               {savedQuizzes.map((quiz) => (
-                <article
+                <QuizCard
                   key={quiz.id}
-                  aria-labelledby={`saved-${quiz.id}`}
-                  className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-5"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-0.5 bg-[#006fbf] text-white rounded text-xs font-mono font-bold">
-                        {quiz.courseCode || 'GENERAL'}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteQuiz(quiz)}
-                        aria-label={`Delete ${quiz.title}`}
-                        className="text-gray-400 hover:text-red-600 transition-colors p-1 cursor-pointer"
-                        title="Delete quiz"
-                      >
-                        <Trash2 aria-hidden="true" className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    <h3
-                      id={`saved-${quiz.id}`}
-                      className="text-lg font-bold text-gray-900 leading-snug line-clamp-2"
-                    >
-                      {quiz.title}
-                    </h3>
-
-                    <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 pt-2 border-t border-gray-100">
-                      <div className="flex items-center gap-1.5 font-medium">
-                        <HelpCircle
-                          aria-hidden="true"
-                          className="w-4 h-4 text-gray-400"
-                        />
-                        <span>{quiz.questions.length} Questions</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 font-medium">
-                        <Clock
-                          aria-hidden="true"
-                          className="w-4 h-4 text-gray-400"
-                        />
-                        <span>{quiz.timeLimitMinutes} Minutes</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 border-t border-gray-100 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onStart(quiz)}
-                      className="flex-1 px-4 py-2 bg-[#006fbf] hover:bg-[#005694] text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                    >
-                      <Play
-                        aria-hidden="true"
-                        className="w-3.5 h-3.5 fill-current"
-                      />{' '}
-                      Start Quiz
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => exportJson(quiz)}
-                      className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300 font-semibold text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                      title="Export JSON file"
-                    >
-                      <Download aria-hidden="true" className="w-3.5 h-3.5" />{' '}
-                      Export
-                    </button>
-                  </div>
-                </article>
+                  quiz={quiz}
+                  onStart={onStart}
+                  onDelete={handleDeleteQuiz}
+                />
               ))}
             </div>
           ))}
 
         {subTab === 'attempts' &&
           (attempts.length === 0 ? (
-            <div className="bg-white border border-dashed border-gray-300 rounded-xl p-12 text-center space-y-4">
-              <div className="w-16 h-16 bg-amber-500 text-gray-900 rounded-full flex items-center justify-center mx-auto">
-                <History aria-hidden="true" className="w-8 h-8" />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900">
-                No Attempt History Recorded
-              </h2>
-              <p className="text-sm text-gray-500 max-w-md mx-auto">
-                Complete a mock quiz attempt to automatically track your scores,
-                completion time, and answer breakdowns.
-              </p>
-            </div>
+            <EmptyState
+              icon={<History aria-hidden="true" className="w-8 h-8" />}
+              iconClass="bg-amber-500 text-gray-900"
+              title="No Attempt History Recorded"
+              text="Complete a mock quiz attempt to automatically track your scores, completion time, and answer breakdowns."
+            />
           ) : (
             <ul className="space-y-4">
               {attempts.map((rec) => (

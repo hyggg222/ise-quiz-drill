@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792796052885",
+  "title": "Java Slide 5",
+  "courseCode": "ITP",
+  "description": "Practice test covering counter-controlled iteration, for and do...while loops, switch statements with integers and Strings, break and continue statements, logical operators, short-circuit evaluation, operator precedence, and printf formatting.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "int counter = 10;\ndo {\n    System.out.printf(\"%d \", counter);\n    ++counter;\n} while (counter < 10);\nSystem.out.printf(\"%d\", counter);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "10"
+        },
+        {
+          "id": "b",
+          "text": "11"
+        },
+        {
+          "id": "c",
+          "text": "10 11"
+        },
+        {
+          "id": "d",
+          "text": "10 10"
+        },
+        {
+          "id": "e",
+          "text": "11 11"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "A do...while statement evaluates its loop-continuation condition after executing the loop body, so the body executes once (printing \"10 \" and incrementing counter to 11) before the condition (11 < 10) fails and the final printf outputs \"11\"."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of attempting to compile and run the following Java code snippet?",
+      "codeSnippet": "int sum = 0;\nfor (int i = 1; i <= 4; i++) {\n    sum += i;\n}\nSystem.out.printf(\"%d %d\", sum, i);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compile-time error: variable i cannot be resolved outside the for loop"
+        },
+        {
+          "id": "b",
+          "text": "10 5"
+        },
+        {
+          "id": "c",
+          "text": "10 4"
+        },
+        {
+          "id": "d",
+          "text": "6 4"
+        },
+        {
+          "id": "e",
+          "text": "6 5"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "When a control variable is declared in the initialization section of a for loop header, its scope is restricted strictly to that for statement, so referencing i after the loop body causes a compilation error."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "boolean p = true;\nboolean q = false;\nSystem.out.printf(\"%b %b %b\", p ^ true, !q && p, p ^ q);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "true true true"
+        },
+        {
+          "id": "b",
+          "text": "false false true"
+        },
+        {
+          "id": "c",
+          "text": "false true false"
+        },
+        {
+          "id": "d",
+          "text": "true false false"
+        },
+        {
+          "id": "e",
+          "text": "false true true"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "The exclusive OR operator (^) evaluates to true only when its operands differ, so (true ^ true) is false and (true ^ false) is true; !q && p evaluates (!false && true), which is true."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "int count;\nfor (count = 1; count <= 6; count++) {\n    if (count == 2) {\n        continue;\n    }\n    if (count == 4) {\n        break;\n    }\n    System.out.printf(\"%d \", count);\n}\nSystem.out.printf(\"End:%d\", count);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "1 2 3 End:4"
+        },
+        {
+          "id": "b",
+          "text": "1 3 End:4"
+        },
+        {
+          "id": "c",
+          "text": "1 3 End:5"
+        },
+        {
+          "id": "d",
+          "text": "1 3 4 End:4"
+        },
+        {
+          "id": "e",
+          "text": "1 3 5 6 End:7"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "When count is 2, continue skips the printf and jumps to count++ (making count 3); when count is 4, break immediately terminates the for loop without executing the printf or the increment expression, leaving count at 4."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "int x = 2;\nint y = 10;\nint total = 0;\nint j;\nfor (j = x; j <= y; total += j, j += y / x);\n{\n    total += 100;\n}\nSystem.out.printf(\"j=%d total=%d\", j, total);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "j=12 total=209"
+        },
+        {
+          "id": "b",
+          "text": "j=7 total=109"
+        },
+        {
+          "id": "c",
+          "text": "j=12 total=114"
+        },
+        {
+          "id": "d",
+          "text": "j=12 total=109"
+        },
+        {
+          "id": "e",
+          "text": "j=12 total=9"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "The semicolon immediately after the for header makes the loop body an empty statement, so the loop runs for j = 2 and j = 7 (updating total to 2 + 7 = 9 and j to 12 in the comma-separated increment list), after which the standalone block adds 100 to total once."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "Assuming a standard United States locale, what is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "double principal = 1000.0;\nint ratePercent = 5;\ndouble rate = ratePercent / 100 + 0.10;\ndouble amount = principal * Math.pow(1.0 + rate, 2);\nSystem.out.printf(\"[%-5s][%,8.2f]\", \"Yr2\", amount);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "[  Yr2][1,210.00]"
+        },
+        {
+          "id": "b",
+          "text": "[Yr2  ][1,210.00]"
+        },
+        {
+          "id": "c",
+          "text": "[Yr2  ][1,322.50]"
+        },
+        {
+          "id": "d",
+          "text": "[Yr2  ][ 1210.00]"
+        },
+        {
+          "id": "e",
+          "text": "[  Yr2][1,322.50]"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "Because ratePercent and 100 are both int values, ratePercent / 100 performs integer division and evaluates to 0, making rate = 0.10 and amount = 1000.0 * (1.10)^2 = 1210.0; %-5s left-justifies \"Yr2\" in a 5-character field, and %,8.2f formats 1210.0 with a comma and two decimal places as \"1,210.00\"."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "String state = \"NY\";\nint points = 75;\nint code = 0;\n\nswitch (state) {\n    case \"MA\":\n    case \"NY\":\n        code += 10;\n    case \"NJ\":\n        code += 20;\n        break;\n    default:\n        code += 5;\n}\n\nswitch (points / 10) {\n    case 8:\n        code += 1;\n        break;\n    case 7:\n        code += 2;\n    default:\n        code += 4;\n}\n\nSystem.out.println(code);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "12"
+        },
+        {
+          "id": "b",
+          "text": "32"
+        },
+        {
+          "id": "c",
+          "text": "16"
+        },
+        {
+          "id": "d",
+          "text": "34"
+        },
+        {
+          "id": "e",
+          "text": "36"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "In the first switch, matching \"NY\" adds 10 and falls through into \"NJ\" (adding 20) before hitting break; in the second switch, integer division 75 / 10 equals 7, which matches case 7 (adding 2) and falls through into default (adding 4) for a total of 36."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "int a = 1;\nint b = 1;\nint c = 1;\n\nboolean r1 = (a == 1) || (++a > 1) && (++b > 1);\nboolean r2 = (b == 2) & (++b > 1) | (++c > 1);\n\nSystem.out.printf(\"%b %b %d %d %d\", r1, r2, a, b, c);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "true true 1 2 2"
+        },
+        {
+          "id": "b",
+          "text": "true true 1 1 2"
+        },
+        {
+          "id": "c",
+          "text": "true true 2 2 2"
+        },
+        {
+          "id": "d",
+          "text": "true false 1 2 1"
+        },
+        {
+          "id": "e",
+          "text": "true true 2 3 2"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "In r1, || short-circuits as soon as (a == 1) evaluates to true, skipping the entire && subexpression so a and b stay 1; in r2, & and | do not short-circuit, so both (++b > 1) and (++c > 1) execute, incrementing b and c to 2 and yielding false | true, which is true."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact printed output when the following Java code snippet is executed?",
+      "codeSnippet": "final int TARGET = 2;\nint i = 0;\nint result = 0;\n\nwhile (i < 4) {\n    i++;\n    for (int j = 1; j <= 3; j++) {\n        switch (j) {\n            case 1:\n                result += i;\n                break;\n            case TARGET:\n                if (i % 2 == 0) {\n                    continue;\n                }\n                result += 10;\n                break;\n            default:\n                result += 100;\n        }\n        result += 1;\n    }\n}\nSystem.out.println(result);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "442"
+        },
+        {
+          "id": "b",
+          "text": "238"
+        },
+        {
+          "id": "c",
+          "text": "440"
+        },
+        {
+          "id": "d",
+          "text": "334"
+        },
+        {
+          "id": "e",
+          "text": "14"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "The outer loop runs for i = 1, 2, 3, 4. For each i, j = 1 adds (i + 1) because break only exits the switch, j = 2 adds 11 when i is odd or skips both result += 10 and result += 1 via continue (jumping to j++) when i is even, and j = 3 adds 101, totaling 114 + 104 + 116 + 106 = 440."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result when the following Java code snippet is compiled and executed?",
+      "codeSnippet": "boolean flag = true;\nint x = 1;\nint y = 10;\n\nfor (; flag && (x < 6); x += 2) {\n    if ((flag = (x != 3)) ^ (y -= 3) < 5) {\n        y += x;\n    }\n}\nSystem.out.printf(\"flag=%b x=%d y=%d\", flag, x, y);",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compile-time error: assignment operator = cannot be used inside an if condition"
+        },
+        {
+          "id": "b",
+          "text": "flag=false x=3 y=5"
+        },
+        {
+          "id": "c",
+          "text": "flag=false x=5 y=8"
+        },
+        {
+          "id": "d",
+          "text": "flag=false x=5 y=5"
+        },
+        {
+          "id": "e",
+          "text": "flag=true x=7 y=6"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Assigning a boolean to a boolean inside a condition is legal. On iteration 1 (x = 1), flag becomes true, y becomes 7 (7 < 5 is false), true ^ false is true so y += 1 sets y to 8, and x becomes 3; on iteration 2 (x = 3), flag becomes false, ^ still evaluates (y -= 3) < 5 setting y to 5 (5 < 5 is false), x increments to 5, and the loop terminates because flag is false."
+    }
+  ]
+}

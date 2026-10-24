@@ -1,0 +1,348 @@
+{
+  "id": "quiz-1792796052885",
+  "title": "Java Slide 3",
+  "courseCode": "ITP",
+  "description": "Practice test covering Java classes, instance variables, access modifiers, constructors, primitive vs. reference types, floating-point numbers, Scanner input, and formatted output.",
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact output printed when the following Java program is compiled and executed?",
+      "codeSnippet": "public class Account {\n    private String name;\n    private double balance;\n    private boolean active;\n\n    public static void main(String[] args) {\n        Account acc = new Account();\n        System.out.printf(\"%s %.1f %b\", acc.name, acc.balance, acc.active);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "empty 0.0 false"
+        },
+        {
+          "id": "b",
+          "text": "null 0 false"
+        },
+        {
+          "id": "c",
+          "text": "null 0.0 false"
+        },
+        {
+          "id": "d",
+          "text": "null 0.0 true"
+        },
+        {
+          "id": "e",
+          "text": "null 0.00 false"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "Reference-type instance variables like String default to null, numeric primitive instance variables like double default to 0.0, and boolean instance variables default to false[cite: 29, 65, 68, 69]. The format specifier %.1f outputs 0.0 with one digit after the decimal point[cite: 63]."
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact result of attempting to compile and run the following code?",
+      "codeSnippet": "public class AccountTest {\n    public static void main(String[] args) {\n        double initialDeposit;\n        double bonus = 10.0;\n        if (bonus < 5.0) {\n            initialDeposit = 50.0;\n        }\n        System.out.printf(\"%.2f\", initialDeposit);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Compile-time error: local variable initialDeposit might not have been initialized"
+        },
+        {
+          "id": "b",
+          "text": "It compiles and prints 0.00 because double variables always default to 0.0"
+        },
+        {
+          "id": "c",
+          "text": "It compiles and prints 50.00 because initialDeposit is assigned in the if block"
+        },
+        {
+          "id": "d",
+          "text": "It compiles and prints 10.00 because bonus is the only initialized variable"
+        },
+        {
+          "id": "e",
+          "text": "Runtime exception: NullPointerException when printf reads initialDeposit"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Unlike instance variables, local variables are not automatically initialized by default[cite: 29]. The Java compiler issues a compilation error whenever code attempts to read a local variable that is not guaranteed to be initialized before use[cite: 64]."
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What is the exact output printed by the following code snippet?",
+      "codeSnippet": "import java.util.Scanner;\n\npublic class NameReader {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(\"Jane Green\\nJohn Blue\\n\");\n        String first = input.next();\n        String second = input.nextLine();\n        System.out.printf(\"[%s][%s]\", first, second);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "[Jane Green][John Blue]"
+        },
+        {
+          "id": "b",
+          "text": "[Jane][Green]"
+        },
+        {
+          "id": "c",
+          "text": "[Jane][John Blue]"
+        },
+        {
+          "id": "d",
+          "text": "[Jane Green][ ]"
+        },
+        {
+          "id": "e",
+          "text": "[Jane][ Green]"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Scanner method next() reads characters only until the first whitespace character is encountered, returning \"Jane\" and leaving \" Green\" on the first line[cite: 24]. The subsequent call to nextLine() reads the remaining characters on that line up to the newline character, returning \" Green\" including the leading space[cite: 24]."
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "type": "mcq",
+      "difficulty": "easy",
+      "prompt": "What happens when you attempt to compile and execute the following Java class?",
+      "codeSnippet": "public class TypeTest {\n    private int count = 5;\n    private String label = \"Items\";\n\n    public static void main(String[] args) {\n        TypeTest test = new TypeTest();\n        System.out.println(test.count.toString() + \" \" + test.label);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "It compiles and prints \"5 Items\" to the standard output"
+        },
+        {
+          "id": "b",
+          "text": "Compile-time error: primitive variable count cannot be used to invoke a method"
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: main cannot access private instance variables of TypeTest"
+        },
+        {
+          "id": "d",
+          "text": "It compiles and prints \"0 null\" because instance variables reset in main"
+        },
+        {
+          "id": "e",
+          "text": "Runtime exception: NullPointerException when invoking toString() on count"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "The instance variable count is of primitive type int, which stores a single value rather than a reference to an object[cite: 68, 69]. A primitive-type variable cannot be used to invoke methods, causing a compile-time error on test.count.toString()[cite: 69]."
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of attempting to compile and run the following code?",
+      "codeSnippet": "class Account {\n    private String name;\n    private double balance;\n\n    public Account(String name, double balance) {\n        this.name = name;\n        if (balance > 0.0) {\n            this.balance = balance;\n        }\n    }\n\n    public double getBalance() {\n        return balance;\n    }\n}\n\npublic class AccountTest {\n    public static void main(String[] args) {\n        Account a1 = new Account(\"Jane Green\", 50.0);\n        Account a2 = new Account();\n        System.out.printf(\"%.2f %.2f\", a1.getBalance(), a2.getBalance());\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "It compiles and prints \"50.00 0.00\" using the compiler's default constructor"
+        },
+        {
+          "id": "b",
+          "text": "It compiles and prints \"50.00 50.00\" by copying the previous object's state"
+        },
+        {
+          "id": "c",
+          "text": "Runtime exception: NullPointerException when calling a2.getBalance()"
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: no suitable no-argument constructor found for Account()"
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: class Account must be declared public in its own file"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "When a class declares a custom constructor, the Java compiler does not create a default no-argument constructor for that class[cite: 49]. Consequently, calling new Account() with no arguments causes a compilation error[cite: 30, 49]."
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact output printed when the following program is executed?",
+      "codeSnippet": "public class Account {\n    private String name = \"Default\";\n    private double balance;\n\n    public Account(String name, double balance) {\n        name = name;\n        if (balance > 0.0) {\n            this.balance = balance;\n        }\n    }\n\n    public void deposit(double depositAmount) {\n        if (depositAmount > 0.0) {\n            balance = balance + depositAmount;\n        }\n    }\n\n    public static void main(String[] args) {\n        Account acc = new Account(\"Jane\", -20.0);\n        acc.deposit(-10.0);\n        acc.deposit(35.5);\n        System.out.printf(\"%s: $%.2f\", acc.name, acc.balance);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "Jane: $35.50"
+        },
+        {
+          "id": "b",
+          "text": "Default: $35.50"
+        },
+        {
+          "id": "c",
+          "text": "Default: $15.50"
+        },
+        {
+          "id": "d",
+          "text": "Jane: $5.50"
+        },
+        {
+          "id": "e",
+          "text": "null: $35.50"
+        }
+      ],
+      "correctAnswer": "b",
+      "explanation": "In the constructor, name = name assigns the local parameter to itself rather than updating this.name, leaving the instance variable name as \"Default\"[cite: 9, 16, 18]. The negative initial balance (-20.0) and negative deposit (-10.0) are ignored by the > 0.0 checks, so only 35.5 is added and formatted by %.2f as 35.50[cite: 55, 56, 63]."
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact output produced when the following program is run?",
+      "codeSnippet": "public class Account {\n    private double balance;\n\n    public Account(double balance) {\n        if (balance > 0.0) {\n            this.balance = balance;\n        }\n    }\n\n    public void deposit(double amount) {\n        if (amount > 0.0) {\n            balance = balance + amount;\n        }\n        amount = 0.0;\n    }\n\n    public static void main(String[] args) {\n        Account a1 = new Account(10.0);\n        Account a2 = a1;\n        double cash = 15.256;\n        a2.deposit(cash);\n        System.out.printf(\"%.2f %.2f\", a1.balance, cash);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "10.00 15.26"
+        },
+        {
+          "id": "b",
+          "text": "25.26 0.00"
+        },
+        {
+          "id": "c",
+          "text": "25.25 15.25"
+        },
+        {
+          "id": "d",
+          "text": "10.00 0.00"
+        },
+        {
+          "id": "e",
+          "text": "25.26 15.26"
+        }
+      ],
+      "correctAnswer": "e",
+      "explanation": "Reference variables a1 and a2 refer to the same Account object in memory, so a2.deposit(cash) updates that object's balance to 25.256[cite: 56, 69]. Because method parameters are local variables, setting amount = 0.0 does not affect cash in main, and %.2f rounds both values to two decimal places as 25.26 and 15.26[cite: 16, 63]."
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "type": "mcq",
+      "difficulty": "medium",
+      "prompt": "What is the exact result of compiling and running the following Java program?",
+      "codeSnippet": "public class Account {\n    private String name;\n    private double balance;\n\n    public void Account(String name, double balance) {\n        this.name = name;\n        this.balance = balance;\n    }\n\n    public void deposit(int amount) {\n        balance = balance + amount * 2;\n    }\n\n    public void deposit(double amount) {\n        balance = balance + amount;\n    }\n\n    public static void main(String[] args) {\n        Account acc = new Account();\n        acc.deposit(10);\n        acc.deposit(5.5);\n        System.out.printf(\"%s %.1f\", acc.name, acc.balance);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "null 25.5"
+        },
+        {
+          "id": "b",
+          "text": "null 15.5"
+        },
+        {
+          "id": "c",
+          "text": "Compile-time error: no no-argument constructor found for class Account"
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: method Account cannot have the same name as its class"
+        },
+        {
+          "id": "e",
+          "text": "empty 25.5"
+        }
+      ],
+      "correctAnswer": "a",
+      "explanation": "Constructors cannot specify return types, so public void Account(String, double) is a regular method rather than a constructor, and the compiler still provides a default no-argument constructor that initializes name to null and balance to 0.0[cite: 29, 49, 65]. Calling deposit(10) invokes deposit(int) (adding 20) and deposit(5.5) invokes deposit(double) (adding 5.5), yielding null 25.5[cite: 30, 54]."
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact result when the following program is compiled and executed?",
+      "codeSnippet": "public class AccountManager {\n    private Account primary;\n    private Account backup = new Account(\"Backup\", 100.0);\n\n    static class Account {\n        private String name;\n        private double balance;\n\n        public Account(String name, double balance) {\n            this.name = name;\n            if (balance > 0.0) {\n                this.balance = balance;\n            }\n        }\n\n        public double transferTo(Account target, double amount) {\n            if (amount > 0.0 && amount <= balance) {\n                balance = balance - amount;\n                target.balance = target.balance + amount;\n            }\n            return balance;\n        }\n    }\n\n    public static void main(String[] args) {\n        AccountManager mgr = new AccountManager();\n        double remaining = mgr.backup.transferTo(mgr.primary, 40.0);\n        System.out.printf(\"%.2f\", remaining);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "It compiles and prints \"60.00\" after transferring 40.0 to primary"
+        },
+        {
+          "id": "b",
+          "text": "It compiles and prints \"100.00\" because transferTo ignores a null target"
+        },
+        {
+          "id": "c",
+          "text": "Runtime error: NullPointerException when accessing target.balance in transferTo"
+        },
+        {
+          "id": "d",
+          "text": "Compile-time error: transferTo cannot access private field target.balance"
+        },
+        {
+          "id": "e",
+          "text": "Compile-time error: instance variable primary is not initialized before use"
+        }
+      ],
+      "correctAnswer": "c",
+      "explanation": "The reference-type instance variable primary is not explicitly initialized, so it receives the default value null[cite: 69]. When transferTo attempts to evaluate target.balance on that null reference after subtracting amount from backup.balance, a NullPointerException is thrown at runtime[cite: 69]."
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "type": "mcq",
+      "difficulty": "hard",
+      "prompt": "What is the exact output printed when the following program is compiled and executed?",
+      "codeSnippet": "public class Account {\n    private String name;\n    private double balance;\n\n    public Account(String name, double balance) {\n        this.name = name;\n        if (balance > 0.0) {\n            this.balance = balance;\n        }\n    }\n\n    public double applyBonus(int ratePercent) {\n        double bonus = (ratePercent / 100) * balance;\n        balance = balance + bonus;\n        return balance;\n    }\n\n    public double applyBonus(double ratePercent) {\n        double bonus = (ratePercent / 100) * balance;\n        balance = balance + bonus;\n        return balance;\n    }\n\n    public static void main(String[] args) {\n        Account acc = new Account(\"Savings\", 200.0);\n        System.out.printf(\"%.2f %.2f %.2f\",\n            acc.applyBonus(50),\n            acc.applyBonus(10.0),\n            acc.balance);\n    }\n}",
+      "codeLanguage": "java",
+      "points": 1,
+      "options": [
+        {
+          "id": "a",
+          "text": "300.00 330.00 330.00"
+        },
+        {
+          "id": "b",
+          "text": "200.00 220.00 200.00"
+        },
+        {
+          "id": "c",
+          "text": "300.00 220.00 220.00"
+        },
+        {
+          "id": "d",
+          "text": "200.00 220.00 220.00"
+        },
+        {
+          "id": "e",
+          "text": "200.00 200.00 200.00"
+        }
+      ],
+      "correctAnswer": "d",
+      "explanation": "Arguments are evaluated left-to-right: acc.applyBonus(50) calls applyBonus(int) where integer division 50 / 100 evaluates to 0, leaving balance at 200.0[cite: 30, 68]. Next, acc.applyBonus(10.0) calls applyBonus(double) where 10.0 / 100 is 0.10, updating balance to 220.0 before the third argument acc.balance is evaluated[cite: 54, 63]."
+    }
+  ]
+}
