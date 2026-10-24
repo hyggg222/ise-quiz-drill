@@ -3,6 +3,7 @@ import {
   buildPrompt,
   defaultPromptOptions,
   defaultTestConfig,
+  easyToHardText,
   validatePromptOptions,
   validateTestConfig,
   type PromptOptions,
@@ -40,7 +41,7 @@ describe('buildPrompt', () => {
       options({ questionCount: 12, types: ['mcq', 'multi-blank'] }),
       'quiz-1',
     );
-    expect(prompt).toContain('- Total Questions: 12');
+    expect(prompt).toContain('1. Total Questions: 12');
     expect(prompt).toContain('"mcq" (single correct answer)');
     expect(prompt).toContain('"multi-blank"');
     expect(prompt).not.toContain('"true-false" (True / False only)');
@@ -74,6 +75,223 @@ describe('buildPrompt', () => {
       buildPrompt(options(), 'quiz-1'),
     );
     expect(buildPrompt(options(), 'quiz-1')).toContain('"id": "quiz-1"');
+  });
+});
+
+// The part of the prompt between two section titles
+const section = (prompt: string, from: string, to: string): string =>
+  prompt.slice(prompt.indexOf(from), prompt.indexOf(to));
+
+describe('buildPrompt requirements block', () => {
+  const full = options({
+    questionCount: 12,
+    types: ['mcq', 'multi-blank'],
+    topics: 'IaC, CDK',
+    notes: 'British spelling',
+  });
+
+  it('puts every requirement before every other section', () => {
+    const prompt = buildPrompt(full, 'quiz-1');
+    const style = prompt.indexOf('CONTENT ANALYSIS RULES');
+    for (const text of [
+      'Total Questions: 12',
+      'Focus Topics: IaC, CDK',
+      '"multi-blank"',
+      'ONLY THE ALLOWED QUESTION TYPES',
+      'Special Instructions: British spelling',
+    ]) {
+      expect(prompt.indexOf(text)).toBeGreaterThan(-1);
+      expect(prompt.indexOf(text)).toBeLessThan(style);
+    }
+  });
+
+  it('opens with the role sentence and then the requirements', () => {
+    const prompt = buildPrompt(full, 'quiz-1');
+    expect(prompt.startsWith('You are an expert exam question creator.')).toBe(
+      true,
+    );
+    expect(prompt.indexOf('MANDATORY REQUIREMENTS')).toBeLessThan(
+      prompt.indexOf('CONTENT ANALYSIS RULES'),
+    );
+  });
+
+  it('numbers the requirements', () => {
+    const block = section(
+      buildPrompt(full, 'quiz-1'),
+      'MANDATORY REQUIREMENTS',
+      'CONTENT ANALYSIS RULES',
+    );
+    expect(block).toMatch(/^1\. Total Questions: 12/m);
+    expect(block).toMatch(/^2\. /m);
+    expect(block).toMatch(/^5\. Special Instructions: British spelling/m);
+  });
+
+  it('says the requirements beat the style rules but not the JSON format', () => {
+    const block = section(
+      buildPrompt(full, 'quiz-1'),
+      'MANDATORY REQUIREMENTS',
+      'CONTENT ANALYSIS RULES',
+    );
+    expect(block).toMatch(/override/i);
+    expect(block).toMatch(/JSON/);
+  });
+
+  it('leaves out empty topics and special instructions', () => {
+    const block = section(
+      buildPrompt(options(), 'quiz-1'),
+      'MANDATORY REQUIREMENTS',
+      'CONTENT ANALYSIS RULES',
+    );
+    expect(block).not.toContain('Focus Topics');
+    expect(block).not.toContain('Special Instructions');
+    expect(block).toMatch(/^3\. Allowed Question Types/m);
+  });
+
+  it('covers the key topics in the quality rules when none are named', () => {
+    const fidelity = (prompt: string) =>
+      section(prompt, 'SOURCE FIDELITY', 'DISTRACTOR QUALITY');
+    const empty = buildPrompt(options(), 'quiz-1');
+    expect(fidelity(empty)).toMatch(
+      /unless the requirements name focus topics[^\n]*key topics[^\n]*proportionally/i,
+    );
+    expect(empty).not.toContain('Focus Topics');
+    const named = buildPrompt(options({ topics: 'IaC' }), 'quiz-1');
+    expect(named).toContain('Focus Topics: IaC');
+  });
+
+  it('does not repeat the requirements further down', () => {
+    const prompt = buildPrompt(full, 'quiz-1');
+    expect(prompt).not.toContain('EXAM PARAMETERS');
+    expect(prompt.split('British spelling')).toHaveLength(2);
+    expect(prompt.split('Total Questions: 12')).toHaveLength(2);
+  });
+
+  it('keeps the JSON output format section', () => {
+    const prompt = buildPrompt(full, 'quiz-1');
+    expect(prompt).toContain('REQUIRED JSON OUTPUT');
+    expect(prompt).toContain('"id": "quiz-1"');
+    expect(prompt).toContain('TYPE-SPECIFIC RULES');
+  });
+});
+
+describe('easy to hard instruction', () => {
+  it('asks for the order only when there is more than one difficulty', () => {
+    expect(easyToHardText).toMatch(/more than one difficulty/i);
+    expect(easyToHardText).toMatch(/easiest to hardest/);
+  });
+
+  it('reaches the prompt through the special instructions', () => {
+    const prompt = buildPrompt(options({ notes: easyToHardText }), 'quiz-1');
+
+    expect(prompt).toContain(`Special Instructions: ${easyToHardText}`);
+  });
+
+  it('is not in a prompt that was not asked for it', () => {
+    expect(buildPrompt(options(), 'quiz-1')).not.toContain(
+      'easiest to hardest',
+    );
+  });
+});
+
+describe('buildPrompt self-check', () => {
+  const check = (prompt: string) =>
+    section(prompt, 'SELF-CHECK BEFORE OUTPUTTING', 'STUDY MATERIAL BELOW');
+
+  it('lists each requirement that was given', () => {
+    const list = check(
+      buildPrompt(
+        options({
+          questionCount: 12,
+          types: ['mcq', 'multi-blank'],
+          difficulty: 'hard',
+          topics: 'IaC',
+          notes: 'British spelling',
+        }),
+        'quiz-1',
+      ),
+    );
+    expect(list).toContain('exactly 12 questions');
+    expect(list).toContain('allowed type: mcq, multi-blank');
+    expect(list).toMatch(/difficulty/i);
+    expect(list).toContain('focus topics');
+    expect(list).toContain('special instruction');
+  });
+
+  it('leaves out the requirements that were not given', () => {
+    const list = check(buildPrompt(options(), 'quiz-1'));
+    expect(list).not.toContain('focus topics');
+    expect(list).not.toContain('special instruction');
+  });
+
+  it('keeps the existing quality checks', () => {
+    const list = check(buildPrompt(options(), 'quiz-1'));
+    expect(list).toContain('answerable from the provided material');
+    expect(list).toContain('The JSON is valid and parseable');
+  });
+});
+
+describe('buildPrompt rules that agree with the requirements', () => {
+  const prompt = buildPrompt(options(), 'quiz-1');
+
+  it('allows direct recall for Easy questions', () => {
+    const rule = section(prompt, 'ANTI-PATTERNS', 'EXPLANATION QUALITY');
+    expect(rule).toMatch(/Pure recall[^\n]*Easy/);
+  });
+
+  it('lets a requirement about answer positions beat the random spread', () => {
+    const rule = section(
+      prompt,
+      'OPTION RANDOMIZATION',
+      'REQUIRED JSON OUTPUT',
+    );
+    expect(rule).toMatch(
+      /randomi[sz]e[^\n]*unless a mandatory requirement says where the correct answers go/i,
+    );
+  });
+
+  it('writes the option rule as sentences, with no bullet that only opens another', () => {
+    const rule = section(
+      prompt,
+      'OPTION RANDOMIZATION',
+      'REQUIRED JSON OUTPUT',
+    );
+    expect(rule).not.toMatch(/^- .*:$/m);
+  });
+
+  it('lets a requirement beat the code-snippet rule, and says which wins', () => {
+    const rules = section(
+      buildPrompt(
+        options({
+          notes: 'Set codeSnippet and codeLanguage on every question',
+        }),
+        'quiz-1',
+      ),
+      'TYPE-SPECIFIC RULES',
+      'SELF-CHECK BEFORE OUTPUTTING',
+    );
+    expect(rules).toMatch(
+      /"codeSnippet" and "codeLanguage": include only when the question genuinely involves code, unless a requirement says to include them on every question/,
+    );
+  });
+
+  it('numbers nothing but the requirements', () => {
+    const before = (text: string) =>
+      text.slice(0, text.indexOf('REQUIRED JSON OUTPUT'));
+    const numbered = (text: string) => text.match(/^[ \t]*\d+\. .*$/gm) ?? [];
+    const prompt = buildPrompt(
+      options({
+        topics: 'IaC',
+        notes: 'British spelling',
+      }),
+      'quiz-1',
+    );
+    const block = section(
+      prompt,
+      'MANDATORY REQUIREMENTS',
+      'CONTENT ANALYSIS RULES',
+    );
+    expect(numbered(block).length).toBeGreaterThan(0);
+    expect(numbered(before(prompt))).toEqual(numbered(block));
   });
 });
 

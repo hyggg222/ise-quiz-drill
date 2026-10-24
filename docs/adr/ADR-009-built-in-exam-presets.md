@@ -37,3 +37,12 @@ button.
   about. Nothing is lost in that case.
 - The picker is generic in the value it fills, so a later preset kind can reuse
   it.
+
+## Easy-to-hard instruction
+
+- A preset asks for easy to hard order by holding the chip text in its notes,
+  like any other instruction. It has no separate tags field.
+- The text is a constant in code (promptBuilder.ts). presets.json repeats it,
+  and a unit test checks that the ITG notes hold the constant.
+- Notes are part of the prompt options, so the "edited" check and the reset
+  needed no change.

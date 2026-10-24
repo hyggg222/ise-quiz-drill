@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { AlertCircle, Check, Copy, Info, Upload } from 'lucide-react';
+import {
+  AlertCircle,
+  Check,
+  Copy,
+  Info,
+  TriangleAlert,
+  Upload,
+} from 'lucide-react';
 import type { ParseResult } from '../../utils/quizSchema';
 
 // The creator owns the text and its parse result, so both survive a change of
@@ -8,6 +15,8 @@ export interface JsonImporterProps {
   value: string;
   onChange: (text: string) => void;
   result: ParseResult | null;
+  // Where valid JSON broke what the prompt asked for; shown, never blocking
+  warnings?: string[];
 }
 
 const fixRequest = (errors: string[]) =>
@@ -23,6 +32,7 @@ export const JsonImporter: React.FC<JsonImporterProps> = ({
   value,
   onChange,
   result,
+  warnings = [],
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [errorCopied, setErrorCopied] = useState(false);
@@ -211,6 +221,24 @@ export const JsonImporter: React.FC<JsonImporterProps> = ({
                 : 'All Questions on One Page'}
             </p>
           </div>
+        </div>
+      )}
+
+      {parsedQuiz && warnings.length > 0 && (
+        <div
+          role="status"
+          aria-label="Import warnings"
+          className="bg-white border border-amber-500 text-amber-900 px-5 py-4 rounded-xl flex items-start gap-3"
+        >
+          <TriangleAlert
+            aria-hidden="true"
+            className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"
+          />
+          <ul className="text-sm font-semibold space-y-1">
+            {warnings.map((warning) => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
         </div>
       )}
     </section>

@@ -8,6 +8,7 @@ import {
   defaultTestConfig,
   validatePromptOptions,
   validateTestConfig,
+  type PromptOptions,
 } from '../../utils/promptBuilder';
 import {
   applyPresetConfig,
@@ -18,6 +19,7 @@ import {
   resetPromptOptions,
   resetTestConfig,
 } from '../../utils/presets';
+import { checkImport } from '../../utils/importCheck';
 import { parseQuizJson, type ImportSettings } from '../../utils/quizSchema';
 import { CompiledPromptBox } from './CompiledPromptBox';
 import { JsonImporter } from './JsonImporter';
@@ -52,9 +54,12 @@ export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
   // One id per creator session, so the prompt text stays the same
   const [quizId] = useState(() => `quiz-${Date.now()}`);
   // The prompt is only rebuilt on request; `key` tells which options it used
-  const [built, setBuilt] = useState<{ key: string; prompt: string } | null>(
-    null,
-  );
+  // and `options` keeps them for checking the pasted JSON
+  const [built, setBuilt] = useState<{
+    key: string;
+    options: PromptOptions;
+    prompt: string;
+  } | null>(null);
 
   const optionsKey = JSON.stringify(options);
   const optionsErrors = validatePromptOptions(options);
@@ -62,7 +67,11 @@ export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
 
   const handleUpdate = () => {
     if (optionsErrors.length > 0) return;
-    setBuilt({ key: optionsKey, prompt: buildPrompt(options, quizId) });
+    setBuilt({
+      key: optionsKey,
+      options,
+      prompt: buildPrompt(options, quizId),
+    });
   };
 
   // The title is not passed on: an empty title field keeps the JSON's own
@@ -92,6 +101,9 @@ export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
     result?.ok === true
       ? { ...result.quiz, title: config.title.trim() || result.quiz.title }
       : null;
+  // Only a prompt built here says what the JSON should look like
+  const warnings =
+    built && result?.ok ? checkImport(built.options, result.quiz) : [];
   const blockedReason = quiz
     ? validateTestConfig(config)
     : 'Paste valid JSON first';
@@ -222,6 +234,7 @@ export const MockTestCreator: React.FC<MockTestCreatorProps> = ({
             value={jsonText}
             onChange={setJsonText}
             result={result}
+            warnings={warnings}
           />
 
           <div className="border-t border-gray-100 pt-6 space-y-6">

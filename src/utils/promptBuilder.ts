@@ -15,6 +15,11 @@ export interface TestConfig {
   antiCheat: AntiCheatOptions;
 }
 
+// What the "Order Easy to Hard" chip adds to the notes. The import check looks
+// for this text in the notes to know the order was asked for.
+export const easyToHardText =
+  'When the questions have more than one difficulty, order them from easiest to hardest: all easy questions first, then medium, then hard, so the difficulty tag never goes down from the first question to the last.';
+
 // What the AI is asked to write
 export interface PromptOptions {
   questionCount: number;
@@ -113,40 +118,67 @@ export function validateTestConfig(config: TestConfig): string | null {
   return null;
 }
 
+// The requirements the student gave, one text per item
+function requirements(options: PromptOptions): string[] {
+  const types = options.types.map((type) => TYPE_RULES[type]).join('\n   - ');
+  const items = [
+    `Total Questions: ${options.questionCount} (exactly this many, no more and no fewer)`,
+    difficultyRules(options).replace(/\n {2}/g, '\n   '),
+  ];
+  if (options.topics.trim()) {
+    items.push(`Focus Topics: ${options.topics.trim()}`);
+  }
+  items.push(`Allowed Question Types:
+   - ${types}
+
+   [CRITICAL: YOU MUST STRICTLY GENERATE ONLY THE ALLOWED QUESTION TYPES LISTED ABOVE. IF ONLY ONE TYPE IS ALLOWED, ALL QUESTIONS MUST BE OF THAT EXACT TYPE. DO NOT MIX TYPES UNLESS EXPLICITLY LISTED.]`);
+  if (options.notes.trim()) {
+    items.push(`Special Instructions: ${options.notes.trim()}`);
+  }
+  return items;
+}
+
+// One check line for each requirement that was given
+function requirementChecks(options: PromptOptions): string[] {
+  const checks = [
+    `□ There are exactly ${options.questionCount} questions`,
+    `□ Every question has an allowed type: ${options.types.join(', ')}`,
+    '□ The difficulty rules in the mandatory requirements are followed',
+  ];
+  if (options.topics.trim()) {
+    checks.push('□ The questions cover the focus topics');
+  }
+  if (options.notes.trim()) {
+    checks.push('□ Every special instruction is followed');
+  }
+  return checks;
+}
+
 // The id is passed in, so the same options always give the same text
 export function buildPrompt(options: PromptOptions, id: string): string {
-  const difficulty = difficultyRules(options);
-  const types = options.types.map((type) => TYPE_RULES[type]).join('\n  - ');
-  const topics = options.topics.trim()
-    ? `Focus Topics: ${options.topics.trim()}`
-    : 'Focus Topics: Extract key topics from the provided study material. Cover them proportionally.';
-  const notes = options.notes.trim()
-    ? `- Special Instructions: ${options.notes.trim()}\n`
-    : '';
+  const items = requirements(options)
+    .map((item, index) => `${index + 1}. ${item}`)
+    .join('\n');
+  const checks = requirementChecks(options).join('\n');
 
   return `You are an expert exam question creator. Generate a high-quality practice test from the study material provided at the end of this prompt.
+
+═══ MANDATORY REQUIREMENTS ═══
+
+Follow every numbered requirement exactly. They override every style rule below. Only the JSON output format further down cannot be overridden.
+
+${items}
 
 ═══ CONTENT ANALYSIS RULES ═══
 
 Before writing questions, mentally separate the study material into two categories:
 
-1. TEACHING CONTENT (build questions from this): concepts, definitions, mechanics, trade-offs, commands, code examples, diagrams, formulas, comparisons between approaches.
-2. COURSE ADMINISTRATION (never test this): lab instructions, deliverable checklists, exam dates, grading rubrics, integrity rules, module codes, submission deadlines.
+- TEACHING CONTENT (build questions from this): concepts, definitions, mechanics, trade-offs, commands, code examples, diagrams, formulas, comparisons between approaches.
+- COURSE ADMINISTRATION (never test this): lab instructions, deliverable checklists, exam dates, grading rubrics, integrity rules, module codes, submission deadlines.
 
 Lab/assignment sections are still useful — they tell you which *operations* the student has performed, so you can set questions in realistic scenarios. But never ask "what did the lab instruct you to do" — ask about the *skill* the lab exercises.
 
 Litmus test: if a question's correct answer would change when the lecturer edits the handout (without any underlying concept changing), it is testing logistics, not understanding. Rewrite or discard it.
-
-═══ EXAM PARAMETERS ═══
-
-- Total Questions: ${options.questionCount}
-- ${difficulty}
-- ${topics}
-- Allowed Question Types:
-  - ${types}
-
-  [CRITICAL: YOU MUST STRICTLY GENERATE ONLY THE ALLOWED QUESTION TYPES LISTED ABOVE. IF ONLY ONE TYPE IS ALLOWED, ALL QUESTIONS MUST BE OF THAT EXACT TYPE. DO NOT MIX TYPES UNLESS EXPLICITLY LISTED.]
-${notes}
 
 ═══ QUESTION QUALITY RULES ═══
 
@@ -154,6 +186,7 @@ SOURCE FIDELITY:
 - Every question must be answerable from the provided study material.
 - Do NOT invent content, tools, or concepts the material does not cover — a question about something not in the student's slides is wasted revision time.
 - Code snippets in questions should reflect the language/tools used in the material.
+- Unless the requirements name focus topics, extract the key topics from the study material and cover them proportionally.
 
 DISTRACTOR QUALITY (for MCQ / multi-select / true-false):
 - Every question must have at least one distractor (wrong option) that is wrong for a specific, learnable reason — not obviously wrong filler.
@@ -161,7 +194,7 @@ DISTRACTOR QUALITY (for MCQ / multi-select / true-false):
 - Bad distractors: obviously absurd, grammatically inconsistent with the stem, unrelated to the topic.
 
 ANTI-PATTERNS (never do these):
-- Pure recall with no application ("How many X are there?")
+- Pure recall with no application ("How many X are there?"), except for Easy questions, where direct recall is fine
 - "All of the above" or "None of the above" as options
 - Trick questions that depend on a missing/ambiguous word rather than understanding
 - Options that reveal the answer through length, grammar, or shape (e.g., one option is much longer and more detailed than others)
@@ -172,8 +205,8 @@ EXPLANATION QUALITY:
 - Do not make the explanation overly verbose. Use that context budget to write better distractors instead.
 
 OPTION RANDOMIZATION (CRITICAL):
-- You MUST statistically randomize the correct answer across the quiz (e.g. sometimes 'a', sometimes 'c', 'd', 'b').
-- DO NOT default to 'a' or 'b' for every question. Ensure a roughly even distribution of correct option letters throughout the provided questions.
+- You MUST statistically randomize the correct answer across the quiz (e.g. sometimes 'a', sometimes 'c', 'd', 'b'), unless a mandatory requirement says where the correct answers go. If one does, obey it instead.
+- Without such a requirement, DO NOT default to 'a' or 'b' for every question. Ensure a roughly even distribution of correct option letters throughout the provided questions.
 
 ═══ REQUIRED JSON OUTPUT ═══
 
@@ -214,15 +247,18 @@ TYPE-SPECIFIC RULES:
 - "true-false": options must be exactly [{"id":"a","text":"True"},{"id":"b","text":"False"}].
 - "short-answer": omit "options". "correctAnswer" is a string.
 - "multi-blank": omit "options". The prompt MUST contain the exact string "[BLANK]" strategically where inputs go (e.g. "To compile Java, run [BLANK] and then [BLANK]"). "correctAnswer" MUST be an array of strings in order of the blanks.
-- "codeSnippet" and "codeLanguage": include only when the question genuinely involves code. Set to null otherwise.
+- "codeSnippet" and "codeLanguage": include only when the question genuinely involves code, unless a requirement says to include them on every question. Set to null otherwise.
 - "difficulty": must be "easy", "medium", or "hard" for every question.
 
 ═══ SELF-CHECK BEFORE OUTPUTTING ═══
 
-Before returning, verify:
+Before returning, verify every mandatory requirement:
+${checks}
+
+Then verify the quality rules:
 □ Every question is answerable from the provided material (no invented content)
 □ Every MCQ/multi-select question has at least one strong distractor
-□ Correct answer letters (a, b, c, d) are evenly randomized across the test
+□ Correct answer letters (a, b, c, d) are evenly randomized across the test, unless a requirement says where they go
 □ No question can be answered by shape/length/grammar elimination alone
 □ Explanations are concise and strictly focused on the correct reasoning
 □ Difficulty tags match the calibration rules above
