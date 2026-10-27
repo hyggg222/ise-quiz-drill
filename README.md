@@ -140,7 +140,13 @@ deploy run (it is also the `ServiceUrl` output of `ServiceStack`). A CloudWatch
 alarm fires when no task passes `/api/health` for three minutes and emails the
 address in the `ALARM_EMAIL` repository secret, once when the site goes down and
 once when it is back. AWS sends a confirmation email after the first deploy with
-a new address; no alarm email arrives until the link in it is clicked. Roll back
+a new address; no alarm email arrives until the link in it is clicked.
+A second alarm emails the same address when the app answers with five or more
+5xx errors a minute for three minutes. The CloudWatch dashboard
+`ise-quiz-drill` (the `DashboardUrl` output) shows both alarms, healthy tasks,
+requests and 5xx, response time and CPU and memory on one screen. Expect one
+"OK" email from the new alarm after its first deploy, when it leaves the no-data
+state. Roll back
 by deploying an older commit tag:
 
 ```sh

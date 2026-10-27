@@ -18,9 +18,10 @@ export interface ServiceStackProps extends cdk.StackProps {
 export class ServiceStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: ServiceStackProps) {
     super(scope, id, props);
+    const serviceName = 'ise-quiz-drill';
 
     const service = new ecs.CfnExpressGatewayService(this, 'Service', {
-      serviceName: 'ise-quiz-drill',
+      serviceName,
       infrastructureRoleArn: props.roles.infrastructureRole.roleArn,
       executionRoleArn: props.roles.executionRole.roleArn,
       primaryContainer: {
@@ -47,28 +48,56 @@ export class ServiceStack extends cdk.Stack {
     const targetGroups =
       service.attrEcsManagedResourceArnsIngressPathTargetGroupArns;
 
-    // Express Mode rolls out a canary across two target groups; add both so
-    // the alarm sees healthy tasks whichever one is live
-    const healthyIn = (index: number) =>
+    // One load balancer metric in one of the two target groups
+    const inTargetGroup = (
+      metricName: string,
+      statistic: string,
+      index: number,
+    ) =>
       new cloudwatch.Metric({
         namespace: 'AWS/ApplicationELB',
-        metricName: 'HealthyHostCount',
+        metricName,
         dimensionsMap: {
           LoadBalancer: loadBalancer,
           TargetGroup: afterLastColon(cdk.Fn.select(index, targetGroups)),
         },
-        statistic: 'Maximum',
+        statistic,
         period: cdk.Duration.minutes(1),
       });
 
+    // Express Mode rolls out a canary across two target groups; add both so
+    // alarms and graphs see the tasks whichever one is live
+    const bothTargetGroups = (
+      metricName: string,
+      statistic: string,
+      label: string,
+      // Ids must differ when two sums share one graph
+      prefix = '',
+    ) =>
+      new cloudwatch.MathExpression({
+        expression: `FILL(${prefix}blue, 0) + FILL(${prefix}green, 0)`,
+        usingMetrics: {
+          [`${prefix}blue`]: inTargetGroup(metricName, statistic, 0),
+          [`${prefix}green`]: inTargetGroup(metricName, statistic, 1),
+        },
+        label,
+        period: cdk.Duration.minutes(1),
+      });
+    const healthyTasks = bothTargetGroups(
+      'HealthyHostCount',
+      'Maximum',
+      'Healthy tasks',
+    );
+    const errors = bothTargetGroups(
+      'HTTPCode_Target_5XX_Count',
+      'Sum',
+      '5xx',
+      'err',
+    );
+
     const alarm = new cloudwatch.Alarm(this, 'NoHealthyTaskAlarm', {
       alarmDescription: 'No task of ise-quiz-drill passes /api/health',
-      metric: new cloudwatch.MathExpression({
-        expression: 'FILL(blue, 0) + FILL(green, 0)',
-        usingMetrics: { blue: healthyIn(0), green: healthyIn(1) },
-        label: 'Healthy tasks',
-        period: cdk.Duration.minutes(1),
-      }),
+      metric: healthyTasks,
       comparisonOperator: cloudwatch.ComparisonOperator.LESS_THAN_THRESHOLD,
       threshold: 1,
       evaluationPeriods: 3,
@@ -86,6 +115,74 @@ export class ServiceStack extends cdk.Stack {
     }
     alarm.addAlarmAction(new cloudwatchActions.SnsAction(alarmTopic));
     alarm.addOkAction(new cloudwatchActions.SnsAction(alarmTopic));
+
+    // The app is up but failing requests. No traffic means no data, which is
+    // fine here: an outage is the health alarm's job.
+    const errorAlarm = new cloudwatch.Alarm(this, 'ErrorAlarm', {
+      alarmDescription: 'ise-quiz-drill answers with 5xx errors',
+      metric: errors,
+      comparisonOperator:
+        cloudwatch.ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      threshold: 5,
+      evaluationPeriods: 3,
+      datapointsToAlarm: 3,
+      treatMissingData: cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+    errorAlarm.addAlarmAction(new cloudwatchActions.SnsAction(alarmTopic));
+    errorAlarm.addOkAction(new cloudwatchActions.SnsAction(alarmTopic));
+
+    // One screen for the service: health, traffic, errors, speed, resources
+    const ecsMetric = (metricName: string) =>
+      new cloudwatch.Metric({
+        namespace: 'AWS/ECS',
+        metricName,
+        // Express Mode puts the service in the default cluster
+        dimensionsMap: { ClusterName: 'default', ServiceName: serviceName },
+        statistic: 'Average',
+        period: cdk.Duration.minutes(1),
+      });
+    const dashboard = new cloudwatch.Dashboard(this, 'Dashboard', {
+      dashboardName: serviceName,
+      widgets: [
+        [
+          new cloudwatch.AlarmStatusWidget({
+            title: 'Alarms',
+            alarms: [alarm, errorAlarm],
+            width: 6,
+          }),
+          new cloudwatch.GraphWidget({
+            title: 'Healthy tasks',
+            left: [healthyTasks],
+            width: 9,
+          }),
+          new cloudwatch.GraphWidget({
+            title: 'Requests and 5xx',
+            left: [
+              bothTargetGroups('RequestCount', 'Sum', 'Requests', 'req'),
+              errors,
+            ],
+            width: 9,
+          }),
+        ],
+        [
+          new cloudwatch.GraphWidget({
+            title: 'Response time p95 (s)',
+            left: [0, 1].map((index) =>
+              inTargetGroup('TargetResponseTime', 'p95', index),
+            ),
+            width: 12,
+          }),
+          new cloudwatch.GraphWidget({
+            title: 'CPU and memory (%)',
+            left: [ecsMetric('CPUUtilization'), ecsMetric('MemoryUtilization')],
+            width: 12,
+          }),
+        ],
+      ],
+    });
+    new cdk.CfnOutput(this, 'DashboardUrl', {
+      value: `https://${this.region}.console.aws.amazon.com/cloudwatch/home?region=${this.region}#dashboards/dashboard/${dashboard.dashboardName}`,
+    });
 
     // The endpoint may come with or without https://, so drop it and add one
     const host = cdk.Fn.join(
