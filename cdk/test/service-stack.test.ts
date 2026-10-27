@@ -88,7 +88,7 @@ describe('ServiceStack', () => {
         .filter((m) => m.MetricStat)
         .map((m) => m.MetricStat!.Metric.MetricName);
 
-    // Express Mode deploys blue/green across two target groups, so the alarm
+    // Express Mode rolls out a canary across two target groups, so the alarm
     // must count healthy tasks in both or it goes blind after each deploy
     test('counts healthy tasks across both target groups', () => {
       expect(healthyHostMetrics()).toEqual([
