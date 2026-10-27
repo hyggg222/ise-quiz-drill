@@ -8,7 +8,7 @@ export const GET: APIRoute = async () => {
   };
 
   return new Response(JSON.stringify(healthData), {
-    status: 200,
+    status: 500,
     headers: {
       'Content-Type': 'application/json',
     },
