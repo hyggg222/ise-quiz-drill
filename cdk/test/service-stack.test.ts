@@ -37,6 +37,29 @@ const resolve = (value: Cfn, endpoint: string): string | string[] => {
   throw new Error(`cannot resolve ${fn}`);
 };
 
+// Finds one alarm by its description; the stack has more than one
+const alarmNamed = (description: string) => {
+  const alarms = Object.values(
+    template().findResources('AWS::CloudWatch::Alarm', {
+      Properties: { AlarmDescription: description },
+    }),
+  );
+  expect(alarms).toHaveLength(1);
+  return alarms[0].Properties;
+};
+const metricNames = (alarm: { Metrics: unknown[] }) =>
+  (alarm.Metrics as { MetricStat?: { Metric: { MetricName: string } } }[])
+    .filter((m) => m.MetricStat)
+    .map((m) => m.MetricStat!.Metric.MetricName);
+// The math line and the ids of its two inputs, blue first
+const sum = (alarm: { Metrics: { Id: string; Expression?: string }[] }) => ({
+  expression: alarm.Metrics.find((m) => m.Expression)?.Expression,
+  ids: alarm.Metrics.filter((m) => !m.Expression).map((m) => m.Id),
+});
+const topicRef = (t: Template) => ({
+  Ref: Object.keys(t.findResources('AWS::SNS::Topic'))[0],
+});
+
 describe('ServiceStack', () => {
   test('runs the image tag it is given from the project repository', () => {
     template('9f8e7d6').hasResourceProperties(
@@ -78,23 +101,20 @@ describe('ServiceStack', () => {
   });
 
   describe('health alarm', () => {
-    const alarm = () => {
-      const alarms = template().findResources('AWS::CloudWatch::Alarm');
-      expect(Object.keys(alarms)).toHaveLength(1);
-      return Object.values(alarms)[0].Properties;
-    };
-    const healthyHostMetrics = () =>
-      (alarm().Metrics as { MetricStat?: { Metric: { MetricName: string } } }[])
-        .filter((m) => m.MetricStat)
-        .map((m) => m.MetricStat!.Metric.MetricName);
+    const alarm = () =>
+      alarmNamed('No task of ise-quiz-drill passes /api/health');
 
     // Express Mode rolls out a canary across two target groups, so the alarm
     // must count healthy tasks in both or it goes blind after each deploy
     test('counts healthy tasks across both target groups', () => {
-      expect(healthyHostMetrics()).toEqual([
+      expect(metricNames(alarm())).toEqual([
         'HealthyHostCount',
         'HealthyHostCount',
       ]);
+      expect(sum(alarm())).toEqual({
+        expression: 'FILL(blue, 0) + FILL(green, 0)',
+        ids: ['blue', 'green'],
+      });
     });
 
     test('fires after three minutes with no healthy task', () => {
@@ -128,6 +148,73 @@ describe('ServiceStack', () => {
 
     test('adds no subscription without an address', () => {
       template().resourceCountIs('AWS::SNS::Subscription', 0);
+    });
+  });
+
+  describe('error alarm', () => {
+    const alarm = () => alarmNamed('ise-quiz-drill answers with 5xx errors');
+
+    // Like the health alarm, it adds both target groups of the rollout
+    test('counts 5xx answers from the app in both target groups', () => {
+      expect(metricNames(alarm())).toEqual([
+        'HTTPCode_Target_5XX_Count',
+        'HTTPCode_Target_5XX_Count',
+      ]);
+      expect(sum(alarm())).toEqual({
+        expression: 'FILL(errblue, 0) + FILL(errgreen, 0)',
+        ids: ['errblue', 'errgreen'],
+      });
+    });
+
+    test('fires at 5 errors a minute for three minutes', () => {
+      expect(alarm()).toMatchObject({
+        ComparisonOperator: 'GreaterThanOrEqualToThreshold',
+        Threshold: 5,
+        EvaluationPeriods: 3,
+        DatapointsToAlarm: 3,
+      });
+    });
+
+    // No requests means no errors, not an outage (the health alarm covers that)
+    test('treats missing data as fine', () => {
+      expect(alarm().TreatMissingData).toBe('notBreaching');
+    });
+
+    test('emails through the same topic when it fires and recovers', () => {
+      const t = template();
+      expect(alarm().AlarmActions).toEqual([topicRef(t)]);
+      expect(alarm().OKActions).toEqual([topicRef(t)]);
+    });
+  });
+
+  describe('dashboard', () => {
+    const body = () =>
+      JSON.stringify(template().findResources('AWS::CloudWatch::Dashboard'));
+
+    test('is one dashboard named after the service', () => {
+      template().hasResourceProperties('AWS::CloudWatch::Dashboard', {
+        DashboardName: 'ise-quiz-drill',
+      });
+    });
+
+    test.each([
+      'HealthyHostCount',
+      'RequestCount',
+      'HTTPCode_Target_5XX_Count',
+      'TargetResponseTime',
+      'CPUUtilization',
+      'MemoryUtilization',
+    ])('shows %s', (metric) => {
+      expect(body()).toContain(metric);
+    });
+
+    test('shows the state of both alarms', () => {
+      expect(body()).toContain('NoHealthyTaskAlarm');
+      expect(body()).toContain('ErrorAlarm');
+    });
+
+    test('outputs a link to the dashboard', () => {
+      expect(template().toJSON().Outputs).toHaveProperty('DashboardUrl');
     });
   });
 
