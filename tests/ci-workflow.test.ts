@@ -133,3 +133,23 @@ describe('deploys wait for CI', () => {
     });
   }
 });
+
+// GitHub lists the static site under Deployments next to the service
+describe('static deploy', () => {
+  const deploy = load('deploy-static.yml').jobs.deploy;
+
+  // The same job runs a dry run on pull requests, which is no deploy
+  it('records a deployment of the static site only on main', () => {
+    expect(deploy.environment.name).toBe(
+      "${{ github.event_name == 'push' && 'production - static' || '' }}",
+    );
+  });
+
+  it('links the deployment to the site URL', () => {
+    const site = (deploy.steps as (Step & { id?: string })[]).find(
+      (s) => s.id === 'site',
+    );
+    expect(site?.run).toContain('echo "url=$URL" >> "$GITHUB_OUTPUT"');
+    expect(deploy.environment.url).toBe('${{ steps.site.outputs.url }}');
+  });
+});

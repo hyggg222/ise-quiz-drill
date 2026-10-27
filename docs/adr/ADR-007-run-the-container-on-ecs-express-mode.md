@@ -34,7 +34,8 @@ Options considered:
   outlive a failed deploy avoid this, and they are not freshly created (and
   not yet usable) when the service starts.
 - Add a CloudWatch alarm when no task passes `/api/health` for three minutes.
-  Express Mode deploys blue/green across two target groups, so the alarm adds
+  Express Mode deploys across two target groups (a canary rollout, see the
+  correction below), so the alarm adds
   `HealthyHostCount` from both; watching only one would go blind after every
   other deploy.
 - The Container Image workflow gets a `deploy` job. After the image is pushed,
@@ -72,3 +73,15 @@ Options considered:
   topic emails the address in the ALARM_EMAIL repository secret, kept out of
   the public repo; without the secret the alarm only shows in the console.
   AWS asks the address to confirm the subscription once.
+
+## Correction (2026-10-27)
+
+This record said Express Mode deploys blue/green. The live service shows a
+canary (`aws ecs describe-services`, 2026-10-26): `strategy: CANARY`,
+`canaryPercent: 5`, `canaryBakeTimeInMinutes: 3`, `bakeTimeInMinutes: 3`, a
+deployment circuit breaker with rollback, and the alarm
+`default/ise-quiz-drill/RollbackAlarm`. A deploy starts the new tasks in the
+second target group, sends them 5% of traffic for three minutes, rolls back by
+itself if 4xx plus 5xx go over 1%, then moves 100% and keeps the old tasks for
+three more minutes. It still uses two target groups, so the alarm decision
+above stands.

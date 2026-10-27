@@ -47,7 +47,7 @@ export class ServiceStack extends cdk.Stack {
     const targetGroups =
       service.attrEcsManagedResourceArnsIngressPathTargetGroupArns;
 
-    // Express Mode deploys blue/green across two target groups; add both so
+    // Express Mode rolls out a canary across two target groups; add both so
     // the alarm sees healthy tasks whichever one is live
     const healthyIn = (index: number) =>
       new cloudwatch.Metric({

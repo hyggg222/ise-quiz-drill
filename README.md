@@ -4,6 +4,12 @@ A practice tool that recreates the Brightspace quiz interface, so students can
 take mock tests built from their own notes. Quizzes and attempts are stored in
 the browser's localStorage.
 
+| Live                      | Link                                                             |
+| ------------------------- | ---------------------------------------------------------------- |
+| Static site (CloudFront)  | https://dwkpg3u1qe2mg.cloudfront.net                             |
+| App and API (ECS Express) | https://is-0440c844b23b473b974836f2321d75dc.ecs.eu-west-1.on.aws |
+| Deploy history            | [Actions](https://github.com/hyggg222/ise-quiz-drill/actions)    |
+
 Open the site to create a mock test: pick the options, copy the generated
 prompt into an AI chat together with your notes, and paste the JSON it returns.
 Quizzes run with a real-time timer, are saved in the browser and keep a history
@@ -71,6 +77,20 @@ On a system that Playwright supports, `npx playwright install chromium` and
 tag in `test:e2e:podman` to the same version (a test checks this). After a
 failure, `playwright-report/` and `test-results/` hold the report and a trace.
 
+### Load test
+
+A steady five-minute test, so the one-minute CloudWatch averages are not
+skewed by a short burst (2026-10-26, `autocannon -c 10 -d 300 -R 20` against
+the ECS URL):
+
+| Measure                       | Result                           |
+| ----------------------------- | -------------------------------- |
+| Requests                      | 6000 at 20 per second, all 2xx   |
+| Latency p50 / p90 / p99 / max | 6 / 12 / 59 / 162 ms             |
+| CPU of the 0.25 vCPU task     | about 5 % average, 8.4 % peak    |
+| Memory                        | about 7 %                        |
+| Tasks                         | stayed at 1, no scale-out needed |
+
 ## CI and deployment
 
 - **CI** (`.github/workflows/ci.yml`) has three jobs that run in parallel on
@@ -88,6 +108,8 @@ failure, `playwright-report/` and `test-results/` hold the report and a trace.
   ([ADR-005](docs/adr/ADR-005-build-images-with-podman.md)). A `deploy` job
   then rolls the ECS Express service onto that SHA and smoke tests the service
   URL ([ADR-007](docs/adr/ADR-007-run-the-container-on-ecs-express-mode.md)).
+  ECS rolls the new version out as a canary: 5% of traffic for three minutes,
+  then 100%, and it rolls back by itself when the error rate goes over 1%.
 - How the tests and the gate fit together is in
   [ADR-006](docs/adr/ADR-006-test-layers-and-ci-gate.md).
 
