@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+  <rect width="480" height="220" rx="20" fill="#172554"/>
+  <circle cx="78" cy="105" r="46" fill="#fca5a5"/>
+  <path d="M62 93h4m26 0h4m-32 35q16-17 32 0" stroke="#7f1d1d" stroke-width="7" stroke-linecap="round"/>
+  <text x="145" y="88" fill="#fff" font-family="Arial,sans-serif" font-size="25" font-weight="700">That was a practice</text>
+  <text x="145" y="126" fill="#bfdbfe" font-family="Arial,sans-serif" font-size="22">run. Now you know</text>
+  <text x="145" y="162" fill="#bfdbfe" font-family="Arial,sans-serif" font-size="22">what to review.</text>
+</svg>

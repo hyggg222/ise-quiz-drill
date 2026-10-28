@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+  <rect width="480" height="220" rx="20" fill="#1e3a8a"/>
+  <path d="M102 47l14 29 33 5-24 23 6 33-29-16-29 16 6-33-24-23 33-5z" fill="#fef08a"/>
+  <path d="M52 54l7 14 16 2-12 11 3 16-14-8-14 8 3-16-12-11 16-2zm111 0l7 14 16 2-12 11 3 16-14-8-14 8 3-16-12-11 16-2z" fill="#bfdbfe"/>
+  <text x="195" y="88" fill="#fff" font-family="Arial,sans-serif" font-size="25" font-weight="700">Aced it.</text>
+  <text x="195" y="127" fill="#dbeafe" font-family="Arial,sans-serif" font-size="22">The study paid off.</text>
+  <text x="195" y="162" fill="#dbeafe" font-family="Arial,sans-serif" font-size="22">Take your victory lap.</text>
+</svg>

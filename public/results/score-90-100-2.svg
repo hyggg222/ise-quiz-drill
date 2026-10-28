@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+  <rect width="480" height="220" rx="20" fill="#581c87"/>
+  <circle cx="105" cy="108" r="49" fill="#f5d0fe"/>
+  <path d="M78 112l17 18 37-41" fill="none" stroke="#86198f" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M57 49l8 17 19 3-14 13 3 19-16-9-16 9 3-19-14-13 19-3zm95 8l6 12 13 2-10 9 2 13-11-6-11 6 2-13-10-9 13-2z" fill="#fef08a"/>
+  <text x="180" y="88" fill="#fff" font-family="Arial,sans-serif" font-size="25" font-weight="700">Legendary</text>
+  <text x="180" y="127" fill="#fae8ff" font-family="Arial,sans-serif" font-size="22">knowledge unlocked.</text>
+  <text x="180" y="162" fill="#fae8ff" font-family="Arial,sans-serif" font-size="22">Absolutely nailed it.</text>
+</svg>

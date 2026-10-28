@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+  <rect width="480" height="220" rx="20" fill="#14532d"/>
+  <path d="M103 48l57 21v40c0 38-25 60-57 75-32-15-57-37-57-75V69z" fill="#bbf7d0"/>
+  <path d="M77 109l18 18 35-39" fill="none" stroke="#166534" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="180" y="88" fill="#fff" font-family="Arial,sans-serif" font-size="25" font-weight="700">Strong run!</text>
+  <text x="180" y="127" fill="#dcfce7" font-family="Arial,sans-serif" font-size="22">You know your stuff.</text>
+  <text x="180" y="162" fill="#dcfce7" font-family="Arial,sans-serif" font-size="22">Keep that momentum.</text>
+</svg>

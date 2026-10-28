@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220">
+  <rect width="480" height="220" rx="20" fill="#164e63"/>
+  <circle cx="105" cy="110" r="49" fill="#a5f3fc"/>
+  <path d="M82 112l15 15 31-36" fill="none" stroke="#155e75" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="178" y="88" fill="#fff" font-family="Arial,sans-serif" font-size="25" font-weight="700">The comeback</text>
+  <text x="178" y="127" fill="#cffafe" font-family="Arial,sans-serif" font-size="22">arc is officially</text>
+  <text x="178" y="162" fill="#cffafe" font-family="Arial,sans-serif" font-size="22">in progress.</text>
+</svg>
