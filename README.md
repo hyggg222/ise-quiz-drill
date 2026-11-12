@@ -7,7 +7,7 @@ the browser's localStorage.
 | Live                      | Link                                                             |
 | ------------------------- | ---------------------------------------------------------------- |
 | Static site (CloudFront)  | https://dwkpg3u1qe2mg.cloudfront.net                             |
-| App and API (ECS Express) | https://is-0440c844b23b473b974836f2321d75dc.ecs.eu-west-1.on.aws |
+| App and API (ECS Express) | https://is-6626ea9a693d4715b8e56310154a8846.ecs.eu-west-1.on.aws |
 | Deploy history            | [Actions](https://github.com/hyggg222/ise-quiz-drill/actions)    |
 
 Open the site to create a mock test: pick the options, copy the generated
@@ -17,12 +17,11 @@ of attempts.
 See [ADR-003](docs/adr/ADR-003-pivot-to-quiz-simulator.md) for why it replaced
 the original blog.
 
-## Community library
+## Demo
 
-The Community Library page lists the tests in `src/data/community/` for every
-visitor. To add one, put its quiz JSON (the importer format) in the folder of
-its preset, such as `itg/`, and open a pull request. The test gets that
-preset's time, layout and proctoring.
+[![Taking a quiz with proctoring on](docs/media/quiz-taking.png)](docs/media/quiz-drill-demo.mp4)
+
+[Watch the demo video](docs/media/quiz-drill-demo.mp4) (about 8 MB).
 
 ## Stack
 
