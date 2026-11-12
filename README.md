@@ -19,9 +19,12 @@ the original blog.
 
 ## Demo
 
-[![Taking a quiz with proctoring on](docs/media/quiz-taking.png)](docs/media/quiz-drill-demo.mp4)
+![Taking a quiz with proctoring on](docs/media/quiz-taking.png)
 
-[Watch the demo video](docs/media/quiz-drill-demo.mp4) (about 8 MB).
+![Demo: create a test from notes and take it](docs/media/quiz-drill-demo.gif)
+
+The GIF runs at 3x speed. [Download the full video](docs/media/quiz-drill-demo.mp4)
+(3 minutes, 8 MB).
 
 ## Stack
 
