@@ -19,6 +19,8 @@ the original blog.
 
 ## Demo
 
+[![Taking a quiz with proctoring on](docs/media/quiz-taking.png)](docs/media/quiz-drill-demo.mp4)
+
 [Watch the demo video](docs/media/quiz-drill-demo.mp4) (about 8 MB).
 
 ## Stack
