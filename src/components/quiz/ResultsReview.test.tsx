@@ -102,6 +102,20 @@ describe('ResultsReview', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows a local, accessible meme for the score band', () => {
+    renderResults({ q1: 'a', q2: 'a', q3: 'a' });
+    const image = screen.getByRole('img');
+
+    expect(image).toHaveAttribute(
+      'src',
+      expect.stringMatching('/results/score-90-100-'),
+    );
+    expect(image).toHaveAttribute(
+      'alt',
+      expect.stringContaining('Score 100 percent'),
+    );
+  });
+
   it('lists proctoring events when anti-cheat is on', () => {
     renderResults(undefined, {
       quiz: {

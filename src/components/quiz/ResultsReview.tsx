@@ -87,6 +87,28 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
   const incorrectCount = results.length - correctIds.size;
   const correctCount = correctIds.size;
   const totalCount = quiz.questions.length;
+  const displayedPercentage = Math.round(percentage);
+  const scoreBand =
+    displayedPercentage >= 90
+      ? '90-100'
+      : displayedPercentage >= 70
+        ? '70-89'
+        : displayedPercentage >= 50
+          ? '50-69'
+          : '0-49';
+  const memeVariants = [
+    {
+      src: `/results/score-${scoreBand}-1.svg`,
+      alt: `Score ${displayedPercentage} percent: a cheerful study-themed meme.`,
+    },
+    {
+      src: `/results/score-${scoreBand}-2.svg`,
+      alt: `Score ${displayedPercentage} percent: an encouraging quiz-result meme.`,
+    },
+  ];
+  const [scoreMeme] = useState(
+    () => memeVariants[Math.floor(Math.random() * memeVariants.length)],
+  );
 
   const filteredQuestions = quiz.questions.filter((q) =>
     filterMode === 'all'
@@ -221,6 +243,19 @@ export const ResultsReview: React.FC<ResultsReviewProps> = ({
                 </div>
               </div>
             </div>
+          </section>
+
+          <section
+            aria-label="Score reaction"
+            className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+          >
+            <img
+              src={scoreMeme.src}
+              alt={scoreMeme.alt}
+              className="block h-auto w-full"
+              width="480"
+              height="220"
+            />
           </section>
 
           {/* Proctoring audit trail */}
